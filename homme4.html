@@ -1,0 +1,575 @@
+<!DOCTYPE html>
+<html class="" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Smart Wallet - The Future of Finance</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@200..800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+tailwind.config = {
+    theme: {
+        extend: {
+            colors: {
+                primary: "#359EFF",
+                "primary-dark": "#1a468e",
+                secondary: "#7209b7",
+                accent: "#f72585",
+                "background-light": "#f8fafc",
+                surface: "#ffffff",
+                "text-main": "#0f172a",
+                "text-muted": "#64748b",
+                "border-light": "#e2e8f0",
+                "premium-dark": "#0B0F19",
+                "card-dark-bg": "#161b22"
+            },
+            fontFamily: {
+                display: "Manrope"
+            },
+            borderRadius: {
+                DEFAULT: "0.5rem",
+                lg: "1rem",
+                xl: "1.5rem",
+                "2xl": "2rem",
+                full: "9999px"
+            },
+            boxShadow: {
+                glow: "0 0 25px rgba(53, 158, 255, 0.4)",
+                "glow-lg": "0 0 50px rgba(53, 158, 255, 0.5)",
+                card: "0 20px 40px -5px rgba(0, 0, 0, 0.08)",
+                "card-hover": "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+                "inner-light": "inset 0 1px 0 rgba(255, 255, 255, 0.4)"
+            },
+            animation: {
+                'spin-slow': 'spin 12s linear infinite',
+                'spin-reverse-slow': 'spin-reverse 15s linear infinite',
+            },
+            backgroundImage: {
+                'mesh-gradient': 'radial-gradient(at 0% 0%, hsla(253,16%,7%,1) 0, transparent 50%), radial-gradient(at 50% 0%, hsla(225,39%,30%,1) 0, transparent 50%), radial-gradient(at 100% 0%, hsla(339,49%,30%,1) 0, transparent 50%)',
+            }
+        }
+    }
+};
+</script>
+<style>
+    ::-webkit-scrollbar {
+        width: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: #f1f1f1; 
+    }
+    ::-webkit-scrollbar-thumb {
+        background: #c1c1c1; 
+        border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: #a8a8a8; 
+    }
+    .glass {
+        background: rgba(255, 255, 255, 0.65);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+    }
+    .glass-dark {
+        background: rgba(15, 23, 42, 0.6);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    .primary-gradient-text {
+        background: linear-gradient(135deg, #359EFF, #7209b7, #f72585);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-size: 200% 200%;
+        animation: gradientFlow 5s ease infinite;
+    }@keyframes gradientFlow {
+        0% { background-position: 0% 50%; }
+        50% { background-position: 100% 50%; }
+        100% { background-position: 0% 50%; }
+    }
+    @keyframes fadeInUp {
+        from { opacity: 0; transform: translateY(40px); }
+        to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes scaleIn {
+        from { opacity: 0; transform: scale(0.9); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    @keyframes float-gentle {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+    }
+    @keyframes float-medium {
+        0% { transform: translate(0px, 0px) rotate(0deg); }
+        33% { transform: translate(5px, -15px) rotate(1deg); }
+        66% { transform: translate(-5px, 10px) rotate(-1deg); }
+        100% { transform: translate(0px, 0px) rotate(0deg); }
+    }
+    @keyframes float-complex {
+        0% { transform: translate3d(0, 0, 0) rotate3d(0, 0, 1, 0deg); }
+        25% { transform: translate3d(10px, -15px, 20px) rotate3d(1, 1, 0, 2deg); }
+        50% { transform: translate3d(-5px, -5px, 0) rotate3d(0, 1, 0, -2deg); }
+        75% { transform: translate3d(-10px, 15px, -20px) rotate3d(1, 0, 0, 1deg); }
+        100% { transform: translate3d(0, 0, 0) rotate3d(0, 0, 1, 0deg); }
+    }
+    @keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(53, 158, 255, 0.2); }
+        50% { box-shadow: 0 0 40px rgba(53, 158, 255, 0.5); }
+    }
+    @keyframes blob-bounce {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
+    }
+    @keyframes spin-reverse {
+        from { transform: rotate(360deg); }
+        to { transform: rotate(0deg); }
+    }
+    @keyframes sheen {
+        0% { transform: translateX(-150%) skewX(-15deg); }
+        100% { transform: translateX(150%) skewX(-15deg); }
+    }.animate-fade-up { animation: fadeInUp 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+    .animate-scale-in { animation: scaleIn 0.8s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; opacity: 0; }
+    .animate-float-gentle { animation: float-gentle 4s ease-in-out infinite; }
+    .animate-float-medium { animation: float-medium 7s ease-in-out infinite; }
+    .animate-float-complex { animation: float-complex 12s ease-in-out infinite; }
+    .animate-float-complex-reverse { animation: float-complex 14s ease-in-out infinite reverse; }
+    .animate-blob { animation: blob-bounce 15s infinite ease-in-out; }
+    .sheen-effect { position: relative; overflow: hidden; }
+    .sheen-effect::after {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+        transform: translateX(-150%);
+        animation: sheen 3s infinite;
+    }.delay-100 { animation-delay: 0.1s; }
+    .delay-200 { animation-delay: 0.2s; }
+    .delay-300 { animation-delay: 0.3s; }
+    .delay-500 { animation-delay: 0.5s; }
+    .delay-700 { animation-delay: 0.7s; }.card-gradient-1 { background: linear-gradient(135deg, #359EFF 0%, #3a0ca3 100%); }
+    .card-gradient-2 { background: linear-gradient(135deg, #FF0080 0%, #7928CA 100%); }
+    .card-gradient-3 { background: linear-gradient(135deg, #00DFD8 0%, #007CF0 100%); }
+    .card-gradient-gold { background: linear-gradient(135deg, #FFD700 0%, #FDB931 50%, #C49204 100%); }
+    .card-gradient-dark { background: linear-gradient(145deg, #1e293b, #0f172a); border: 1px solid rgba(255,255,255,0.1); }
+    .card-gradient-glass { background: rgba(255,255,255,0.1); backdrop-filter: blur(10px); border: 1px solid rgba(255,255,255,0.3); }
+    .card-gradient-mesh { background: radial-gradient(at top left, #8B5CF6, transparent), radial-gradient(at bottom right, #3B82F6, transparent), #1e293b; }
+    .card-pattern { background-image: radial-gradient(circle at 1px 1px, rgba(255,255,255,0.15) 1px, transparent 0); background-size: 10px 10px; }
+    .perspective-2000 { perspective: 2000px; }
+    .transform-style-3d { transform-style: preserve-3d; }
+</style>
+</head>
+<body class="bg-background-light font-display text-text-main antialiased overflow-x-hidden selection:bg-primary selection:text-white">
+<div class="relative flex min-h-screen w-full flex-col group/design-root overflow-hidden">
+<div class="fixed inset-0 pointer-events-none -z-10 bg-[#f8fafc]">
+<div class="absolute top-0 left-0 w-[1000px] h-[1000px] bg-blue-100/50 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2 animate-blob"></div>
+<div class="absolute bottom-0 right-0 w-[800px] h-[800px] bg-purple-100/50 rounded-full blur-[100px] translate-x-1/4 translate-y-1/4 animate-blob delay-500"></div>
+<div class="absolute top-1/2 left-1/2 w-[600px] h-[600px] bg-pink-50/40 rounded-full blur-[110px] -translate-x-1/2 -translate-y-1/2 animate-blob delay-200"></div>
+<div class="absolute inset-0 opacity-[0.015] bg-[url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyMDAiIGhlaWdodD0iMjAwIj48ZmlsdGVyIGlkPSJub2lzZSI+PGZlVHVyYnVsZW5jZSB0eXBlPSJmcmFjdGFsTm9pc2UiIGJhc2VGcmVxdWVuY3k9IjAuNjUiIG51bU9jdGF2ZXM9IjMiIHN0aXRjaFRpbGVzPSJzdGl0Y2giLz48L2ZpbHRlcj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWx0ZXI9InVybCgjbm9pc2UpIiBvcGFjaXR5PSIxIi8+PC9zdmc+')]"></div>
+</div>
+<div class="sticky top-0 z-50 w-full glass transition-all duration-300">
+<div class="layout-container flex h-full flex-col">
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-0">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<header class="flex items-center justify-between whitespace-nowrap py-4">
+<div class="flex items-center gap-3 cursor-pointer hover:opacity-80 transition-opacity group">
+<div class="size-11 flex items-center justify-center bg-gradient-to-br from-primary to-primary-dark rounded-xl text-white shadow-glow group-hover:rotate-6 transition-transform duration-300">
+<span class="material-symbols-outlined text-2xl">account_balance_wallet</span>
+</div>
+<h2 class="text-text-main text-xl font-bold leading-tight tracking-tight">Smart Wallet</h2>
+</div>
+<div class="hidden md:flex flex-1 justify-end gap-8">
+<div class="flex items-center gap-8">
+<a class="text-text-muted hover:text-primary text-sm font-semibold leading-normal transition-colors relative group" href="#">
+                                    Features
+                                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+</a>
+<a class="text-text-muted hover:text-primary text-sm font-semibold leading-normal transition-colors relative group" href="#">
+                                    Security
+                                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+</a>
+<a class="text-text-muted hover:text-primary text-sm font-semibold leading-normal transition-colors relative group" href="#">
+                                    Premium
+                                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-primary transition-all group-hover:w-full"></span>
+</a>
+</div>
+<div class="flex gap-4">
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-white/50 border border-border-light hover:bg-white text-text-main text-sm font-bold leading-normal transition-all hover:shadow-sm">
+<span class="truncate">Login</span>
+</button>
+<button class="flex min-w-[84px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-6 bg-text-main hover:bg-black text-white text-sm font-bold leading-normal transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5">
+<span class="truncate">Sign Up</span>
+</button>
+</div>
+</div>
+<div class="md:hidden flex items-center text-text-main">
+<span class="material-symbols-outlined">menu</span>
+</div>
+</header>
+</div>
+</div>
+</div>
+</div>
+<main class="layout-container flex h-full grow flex-col">
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-5">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<div class="@container">
+<div class="flex flex-col gap-12 py-12 md:py-24 lg:flex-row items-center relative">
+<div class="flex flex-col gap-8 flex-1 z-20 lg:max-w-[50%]">
+<div class="flex flex-col gap-6 text-left">
+<div class="animate-fade-up">
+<div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-white backdrop-blur border border-blue-100 w-fit shadow-sm hover:shadow-md transition-shadow cursor-default">
+<span class="relative flex h-2 w-2">
+<span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
+<span class="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+</span>
+<span class="text-xs font-bold text-transparent bg-clip-text bg-gradient-to-r from-primary to-secondary uppercase tracking-wider">v3.0 Early Access</span>
+</div>
+</div>
+<h1 class="text-text-main text-5xl md:text-7xl font-black leading-[1.05] tracking-[-0.033em] animate-fade-up delay-100 drop-shadow-sm">
+                                    Master Your <br/>
+<span class="primary-gradient-text">Financial Universe</span>
+</h1>
+<p class="text-text-muted text-lg md:text-xl font-medium leading-relaxed max-w-[540px] animate-fade-up delay-200">
+                                    Experience the synergy of banking, crypto, and investments in one sleek, powerful dashboard. The only wallet you'll ever need.
+                                </p>
+</div>
+<div class="flex flex-col sm:flex-row gap-4 pt-4 animate-fade-up delay-300">
+<button class="flex items-center justify-center overflow-hidden rounded-xl h-14 px-8 bg-text-main hover:bg-black text-white text-lg font-bold transition-all shadow-card hover:shadow-2xl hover:-translate-y-1 relative group">
+<span class="truncate relative z-10">Get Started Free</span>
+<div class="absolute inset-0 bg-white/10 translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+<span class="material-symbols-outlined ml-2 text-xl relative z-10 group-hover:translate-x-1 transition-transform">arrow_forward</span>
+</button>
+<button class="flex items-center justify-center overflow-hidden rounded-xl h-14 px-8 bg-white border border-border-light hover:border-primary/30 text-text-main text-lg font-bold transition-all hover:bg-gray-50 hover:-translate-y-1 shadow-sm hover:shadow-md group">
+<span class="truncate">View Demo</span>
+<span class="material-symbols-outlined ml-2 text-xl filled text-text-muted group-hover:text-primary transition-colors">play_circle</span>
+</button>
+</div>
+<div class="flex items-center gap-6 text-sm text-text-muted mt-2 animate-fade-up delay-400">
+<div class="flex -space-x-2">
+<div class="size-8 rounded-full border-2 border-white bg-gray-200 bg-[url('https://i.pravatar.cc/100?img=1')] bg-cover"></div>
+<div class="size-8 rounded-full border-2 border-white bg-gray-200 bg-[url('https://i.pravatar.cc/100?img=5')] bg-cover"></div>
+<div class="size-8 rounded-full border-2 border-white bg-gray-200 bg-[url('https://i.pravatar.cc/100?img=8')] bg-cover"></div>
+<div class="size-8 rounded-full border-2 border-white bg-gray-100 flex items-center justify-center text-xs font-bold">+2k</div>
+</div>
+<div class="flex flex-col">
+<div class="flex text-yellow-400 text-xs">
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+<span class="material-symbols-outlined text-sm filled">star</span>
+</div>
+<span class="text-xs font-medium">Trusted by 2M+ users</span>
+</div>
+</div>
+</div>
+<div class="w-full lg:flex-1 relative h-[600px] lg:h-[700px] flex items-center justify-center perspective-2000 animate-scale-in delay-200 pointer-events-none lg:pointer-events-auto">
+<div class="absolute w-[800px] h-[800px] bg-gradient-to-tr from-blue-400/20 via-purple-400/20 to-pink-400/20 rounded-full blur-[100px] opacity-60 animate-pulse-glow"></div>
+<div class="relative w-[500px] h-[500px] transform-style-3d animate-float-gentle">
+<div class="absolute top-1/2 left-1/2 w-[340px] h-[215px] bg-[#0f172a] rounded-2xl shadow-2xl transform -translate-x-1/2 -translate-y-1/2 z-50 flex flex-col justify-between p-7 text-white border border-white/10 hover:scale-105 transition-transform duration-500 sheen-effect group cursor-pointer">
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-20"></div>
+<div class="relative z-10 flex justify-between items-start">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-3xl text-primary">all_inclusive</span>
+<span class="text-lg font-bold tracking-tight">Smart<span class="font-light text-gray-400">Black</span></span>
+</div>
+<span class="material-symbols-outlined text-2xl text-gray-500">contactless</span>
+</div>
+<div class="relative z-10 space-y-4">
+<div class="flex gap-4 items-center">
+<div class="w-10 h-7 bg-gradient-to-r from-yellow-200 to-yellow-500 rounded flex items-center justify-center shadow-sm">
+<div class="w-6 h-4 border border-yellow-700/30 rounded-sm"></div>
+</div>
+<span class="text-xl font-mono tracking-widest text-gray-300">•••• 9982</span>
+</div>
+<div class="flex justify-between items-end">
+<div>
+<p class="text-[9px] text-gray-400 uppercase tracking-widest mb-1">Card Holder</p>
+<p class="text-sm font-bold tracking-wider">JONATHAN DOE</p>
+</div>
+<div class="flex -space-x-2">
+<div class="size-6 rounded-full bg-red-500/80"></div>
+<div class="size-6 rounded-full bg-yellow-500/80"></div>
+</div>
+</div>
+</div>
+</div>
+<div class="absolute top-0 right-[-40px] w-[260px] h-[160px] card-gradient-gold rounded-xl shadow-xl transform rotate-12 translate-z-[-50px] z-40 p-5 text-white/90 animate-float-complex delay-100 border border-white/20">
+<div class="flex justify-between items-center mb-6">
+<span class="font-serif font-bold italic text-lg text-yellow-900">Elite</span>
+<span class="material-symbols-outlined text-yellow-900">workspace_premium</span>
+</div>
+<div class="text-yellow-900 font-mono text-lg tracking-widest opacity-80">•••• 4421</div>
+</div>
+<div class="absolute bottom-[-20px] left-[-60px] w-[280px] h-[175px] card-gradient-2 rounded-xl shadow-xl transform -rotate-6 translate-z-[20px] z-45 p-5 text-white animate-float-complex-reverse delay-200 border-t border-white/30 backdrop-blur-md">
+<div class="flex justify-between items-center opacity-90">
+<span class="material-symbols-outlined text-3xl">currency_bitcoin</span>
+<span class="text-xs font-bold tracking-widest uppercase border border-white/30 px-2 py-0.5 rounded-full">Crypto</span>
+</div>
+<div class="mt-8">
+<div class="h-10 w-full bg-white/10 rounded-lg mb-2 relative overflow-hidden">
+<div class="absolute top-0 left-0 h-full w-2/3 bg-white/20"></div>
+</div>
+</div>
+</div>
+<div class="absolute top-[-30px] left-[-20px] w-[240px] h-[150px] card-gradient-glass rounded-xl shadow-lg transform -rotate-12 translate-z-[-100px] z-30 p-4 text-gray-800 animate-float-medium delay-300">
+<div class="flex justify-between items-center opacity-60">
+<span class="material-symbols-outlined text-2xl text-blue-600">savings</span>
+<span class="text-[10px] font-bold uppercase text-blue-900">Virtual</span>
+</div>
+<div class="mt-4 text-center">
+<span class="text-2xl font-bold text-blue-900">$14,250</span>
+<div class="text-[10px] text-green-600 font-bold bg-green-100 rounded-full px-2 py-0.5 inline-block mt-1">+12.5%</div>
+</div>
+</div>
+<div class="absolute bottom-[40px] right-[-80px] w-[250px] h-[155px] card-gradient-1 rounded-xl shadow-lg transform rotate-[25deg] translate-z-[-80px] z-20 p-5 text-white animate-float-medium delay-500 opacity-90">
+<div class="flex justify-between items-center">
+<span class="material-symbols-outlined text-2xl">flight_takeoff</span>
+<span class="text-[10px] uppercase font-bold tracking-widest">Travel</span>
+</div>
+</div>
+<div class="absolute top-[30px] left-[40px] w-[300px] h-[190px] card-gradient-mesh rounded-xl shadow-2xl transform rotate-[-5deg] scale-95 z-10 p-5 text-white/60 animate-pulse delay-700">
+<div class="flex justify-end"><span class="material-symbols-outlined">wifi</span></div>
+</div>
+<div class="absolute top-[40%] left-[-110px] w-[200px] h-[120px] bg-white rounded-lg shadow-card transform -rotate-[15deg] z-40 p-3 flex flex-col justify-between animate-float-complex delay-200">
+<div class="size-6 bg-red-500 rounded-full"></div>
+<div class="h-2 w-16 bg-gray-200 rounded"></div>
+</div>
+<div class="absolute bottom-[20%] right-[-100px] w-[220px] h-[140px] card-gradient-3 rounded-lg shadow-card transform rotate-[10deg] z-30 p-4 animate-float-complex-reverse delay-500">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-white">bolt</span>
+<span class="text-white font-bold text-sm">Instant</span>
+</div>
+</div>
+<div class="absolute top-0 right-0 p-3 bg-white rounded-xl shadow-lg animate-float-gentle z-50">
+<span class="material-symbols-outlined text-green-500 text-2xl">check_circle</span>
+</div>
+<div class="absolute bottom-10 left-10 p-3 bg-white rounded-xl shadow-lg animate-float-gentle delay-700 z-50 flex gap-2 items-center">
+<div class="size-2 bg-red-500 rounded-full animate-ping"></div>
+<span class="text-xs font-bold text-gray-800">Live Updates</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<div class="w-full border-y border-white/60 bg-white/40 backdrop-blur-sm z-20">
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-10">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+<div class="flex flex-col gap-2 rounded-2xl p-6 bg-white border border-border-light shadow-sm hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group cursor-default">
+<div class="flex items-center justify-between mb-2">
+<p class="text-text-muted text-xs font-bold uppercase tracking-wider">Active Users</p>
+<div class="p-2 bg-blue-50 rounded-lg group-hover:bg-primary transition-colors duration-300">
+<span class="material-symbols-outlined text-primary group-hover:text-white transition-colors">groups</span>
+</div>
+</div>
+<p class="text-text-main text-4xl font-black leading-tight group-hover:text-primary transition-colors">2M+</p>
+<p class="text-xs text-green-600 font-bold flex items-center gap-1"><span class="material-symbols-outlined text-sm">trending_up</span> +14% this month</p>
+</div>
+<div class="flex flex-col gap-2 rounded-2xl p-6 bg-white border border-border-light shadow-sm hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group cursor-default">
+<div class="flex items-center justify-between mb-2">
+<p class="text-text-muted text-xs font-bold uppercase tracking-wider">Transactions</p>
+<div class="p-2 bg-purple-50 rounded-lg group-hover:bg-secondary transition-colors duration-300">
+<span class="material-symbols-outlined text-secondary group-hover:text-white transition-colors">payments</span>
+</div>
+</div>
+<p class="text-text-main text-4xl font-black leading-tight group-hover:text-secondary transition-colors">$15B+</p>
+<p class="text-xs text-text-muted font-bold">Processed securely</p>
+</div>
+<div class="flex flex-col gap-2 rounded-2xl p-6 bg-white border border-border-light shadow-sm hover:shadow-card-hover hover:-translate-y-1 transition-all duration-300 group cursor-default">
+<div class="flex items-center justify-between mb-2">
+<p class="text-text-muted text-xs font-bold uppercase tracking-wider">Countries</p>
+<div class="p-2 bg-pink-50 rounded-lg group-hover:bg-accent transition-colors duration-300">
+<span class="material-symbols-outlined text-accent group-hover:text-white transition-colors">public</span>
+</div>
+</div>
+<p class="text-text-main text-4xl font-black leading-tight group-hover:text-accent transition-colors">120+</p>
+<p class="text-xs text-text-muted font-bold">Global support 24/7</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-24 bg-transparent relative z-10">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<div class="flex flex-col gap-16 @container">
+<div class="flex flex-col gap-4 text-center items-center">
+<span class="text-secondary font-bold tracking-widest uppercase text-sm">Capabilities</span>
+<h2 class="text-text-main text-3xl md:text-5xl font-black leading-tight tracking-[-0.033em] max-w-[720px]">
+                        Why Choose Smart Wallet?
+                    </h2>
+<p class="text-text-muted text-lg font-medium leading-normal max-w-[600px]">We've reimagined the banking experience to be faster, smarter, and more secure than ever before.</p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<div class="group flex flex-1 gap-6 rounded-3xl border border-white/60 bg-white/80 backdrop-blur p-8 flex-col shadow-card hover:shadow-glow hover:border-primary/40 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-blue-100 rounded-bl-full opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+<div class="size-16 rounded-2xl bg-blue-50 flex items-center justify-center text-primary group-hover:bg-primary group-hover:text-white transition-all duration-300 shadow-sm group-hover:scale-110 relative z-10">
+<span class="material-symbols-outlined text-3xl">verified_user</span>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<h3 class="text-text-main text-xl font-bold leading-tight">Military-Grade Security</h3>
+<p class="text-text-muted text-base leading-relaxed">Multi-layer encryption, biometric verification, and fraud detection algorithms keep your assets strictly yours.</p>
+</div>
+</div>
+<div class="group flex flex-1 gap-6 rounded-3xl border border-white/60 bg-white/80 backdrop-blur p-8 flex-col shadow-card hover:shadow-glow hover:border-secondary/40 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-purple-100 rounded-bl-full opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+<div class="size-16 rounded-2xl bg-purple-50 flex items-center justify-center text-secondary group-hover:bg-secondary group-hover:text-white transition-all duration-300 shadow-sm group-hover:scale-110 relative z-10">
+<span class="material-symbols-outlined text-3xl">rocket_launch</span>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<h3 class="text-text-main text-xl font-bold leading-tight">Instant Transfers</h3>
+<p class="text-text-muted text-base leading-relaxed">Send money to anyone, anywhere, instantly. No hidden fees, no waiting periods, just seamless transactions.</p>
+</div>
+</div>
+<div class="group flex flex-1 gap-6 rounded-3xl border border-white/60 bg-white/80 backdrop-blur p-8 flex-col shadow-card hover:shadow-glow hover:border-accent/40 transition-all duration-300 hover:-translate-y-2 relative overflow-hidden">
+<div class="absolute top-0 right-0 w-32 h-32 bg-pink-100 rounded-bl-full opacity-0 group-hover:opacity-50 transition-opacity duration-500"></div>
+<div class="size-16 rounded-2xl bg-pink-50 flex items-center justify-center text-accent group-hover:bg-accent group-hover:text-white transition-all duration-300 shadow-sm group-hover:scale-110 relative z-10">
+<span class="material-symbols-outlined text-3xl">pie_chart</span>
+</div>
+<div class="flex flex-col gap-3 relative z-10">
+<h3 class="text-text-main text-xl font-bold leading-tight">Smart Analytics</h3>
+<p class="text-text-muted text-base leading-relaxed">Visualize your spending habits with AI-powered insights. Set budgets and reach your financial goals effortlessly.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-20 bg-white/60 backdrop-blur-sm border-y border-white relative z-10">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<div class="flex flex-col gap-10 mb-16 text-center items-center">
+<div class="flex flex-col gap-3">
+<h2 class="text-text-main text-3xl md:text-4xl font-bold leading-tight">Get Started in Minutes</h2>
+<p class="text-text-muted text-lg">Three simple steps to financial freedom.</p>
+</div>
+</div>
+<div class="grid grid-cols-[48px_1fr] gap-x-12 max-w-3xl mx-auto">
+<div class="flex flex-col items-center gap-1 pt-1">
+<div class="size-12 rounded-full bg-primary flex items-center justify-center text-white shadow-glow z-10 animate-pulse relative">
+<span class="material-symbols-outlined">person_add</span>
+<div class="absolute inset-0 rounded-full border-2 border-white animate-ping opacity-20"></div>
+</div>
+<div class="w-[2px] bg-gradient-to-b from-primary to-gray-200 h-full min-h-[100px] grow"></div>
+</div>
+<div class="flex flex-1 flex-col pb-12 pt-2">
+<h3 class="text-text-main text-xl font-bold leading-normal mb-2">Create Your Account</h3>
+<p class="text-text-muted text-base font-normal leading-relaxed">Download the app and sign up with your email. Verify your identity in less than 60 seconds with our automated KYC.</p>
+</div>
+<div class="flex flex-col items-center gap-1">
+<div class="w-[2px] bg-gray-200 h-4"></div>
+<div class="size-12 rounded-full bg-white border-2 border-primary text-primary flex items-center justify-center z-10 shadow-sm transition-transform hover:scale-110 hover:bg-primary hover:text-white duration-300">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div class="w-[2px] bg-gray-200 h-full min-h-[100px] grow"></div>
+</div>
+<div class="flex flex-1 flex-col pb-12 pt-2">
+<h3 class="text-text-main text-xl font-bold leading-normal mb-2">Link Funding Source</h3>
+<p class="text-text-muted text-base font-normal leading-relaxed">Securely connect your bank account, debit card, or crypto wallet. We support over 2,000 institutions globally.</p>
+</div>
+<div class="flex flex-col items-center gap-1 pb-1">
+<div class="w-[2px] bg-gray-200 h-4"></div>
+<div class="size-12 rounded-full bg-white border-2 border-gray-200 flex items-center justify-center text-gray-400 z-10 transition-all hover:scale-110 hover:border-accent hover:text-white hover:bg-accent duration-300">
+<span class="material-symbols-outlined">check_circle</span>
+</div>
+</div>
+<div class="flex flex-1 flex-col pt-2">
+<h3 class="text-text-main text-xl font-bold leading-normal mb-2">Start Transacting</h3>
+<p class="text-text-muted text-base font-normal leading-relaxed">You're all set! Issue virtual cards, make payments, and manage your assets instantly from your dashboard.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="px-4 md:px-10 lg:px-40 flex flex-1 justify-center py-24 mb-10 relative z-20">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1">
+<div class="relative overflow-hidden rounded-[2.5rem] bg-premium-dark px-6 py-20 md:px-20 text-center shadow-2xl group border border-white/5">
+<div class="absolute inset-0 bg-gradient-to-br from-gray-900 via-[#0f172a] to-black z-0"></div>
+<div class="absolute top-0 right-0 w-[600px] h-[600px] bg-primary/20 rounded-full blur-[120px] translate-x-1/2 -translate-y-1/2 animate-pulse-glow"></div>
+<div class="absolute bottom-0 left-0 w-[500px] h-[500px] bg-secondary/20 rounded-full blur-[100px] -translate-x-1/2 translate-y-1/3"></div>
+<div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-5 z-0"></div>
+<div class="relative z-10 flex flex-col items-center gap-8">
+<span class="inline-block py-1 px-3 rounded-full bg-white/10 border border-white/10 text-xs font-bold text-blue-300 uppercase tracking-wider backdrop-blur-md">Premium Access</span>
+<h2 class="text-white text-4xl md:text-6xl font-black leading-tight drop-shadow-lg">Ready to Take Control?</h2>
+<p class="text-gray-300 text-xl max-w-2xl font-medium leading-relaxed">Join the financial revolution. Secure, fast, and built for the modern economy.</p>
+<div class="flex flex-col sm:flex-row gap-5 mt-6 w-full justify-center">
+<button class="flex items-center justify-center rounded-xl h-16 px-10 bg-primary hover:bg-primary-dark text-white text-lg font-bold transition-all hover:scale-105 shadow-[0_0_20px_rgba(53,158,255,0.5)] hover:shadow-[0_0_40px_rgba(53,158,255,0.7)]">
+<span class="truncate">Create Free Account</span>
+<span class="material-symbols-outlined ml-2">arrow_forward</span>
+</button>
+<button class="flex items-center justify-center rounded-xl h-16 px-10 bg-white/5 backdrop-blur-md text-white border border-white/20 text-lg font-bold hover:bg-white/10 transition-all hover:scale-105">
+<span class="truncate">Contact Sales</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<footer class="border-t border-gray-800 bg-[#020617] py-16 text-white relative overflow-hidden z-20">
+<div class="absolute top-0 left-1/2 -translate-x-1/2 w-full h-[1px] bg-gradient-to-r from-transparent via-primary to-transparent opacity-50"></div>
+<div class="absolute bottom-0 left-0 w-full h-full bg-gradient-to-t from-blue-900/10 to-transparent pointer-events-none"></div>
+<div class="px-4 md:px-10 lg:px-40 flex justify-center relative z-10">
+<div class="layout-content-container flex flex-col max-w-[1280px] flex-1 gap-12">
+<div class="flex flex-col md:flex-row justify-between gap-10">
+<div class="flex flex-col gap-6 max-w-sm">
+<div class="flex items-center gap-3 text-white">
+<div class="bg-gradient-to-br from-primary to-blue-600 p-2.5 rounded-xl shadow-glow">
+<span class="material-symbols-outlined text-2xl text-white">account_balance_wallet</span>
+</div>
+<span class="text-2xl font-bold tracking-tight">Smart Wallet</span>
+</div>
+<p class="text-gray-400 text-sm leading-relaxed">The most secure and intuitive way to manage your digital assets. Built for the future of finance, trusted by millions globally.</p>
+<div class="flex gap-4 mt-2">
+<a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group" href="#">
+<svg aria-hidden="true" class="w-5 h-5 fill-current text-gray-400 group-hover:text-white" viewBox="0 0 24 24"><path d="M8.29 20.251c7.547 0 11.675-6.253 11.675-11.675 0-.178 0-.355-.012-.53A8.348 8.348 0 0022 5.92a8.19 8.19 0 01-2.357.646 4.118 4.118 0 001.804-2.27 8.224 8.224 0 01-2.605.996 4.107 4.107 0 00-6.993 3.743 11.65 11.65 0 01-8.457-4.287 4.106 4.106 0 001.27 5.477A4.072 4.072 0 012.8 9.713v.052a4.105 4.105 0 003.292 4.022 4.095 4.095 0 01-1.853.07 4.108 4.108 0 003.834 2.85A8.233 8.233 0 012 18.407a11.616 11.616 0 006.29 1.84"></path></svg>
+</a>
+<a class="size-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-primary hover:text-white transition-all duration-300 group" href="#">
+<svg aria-hidden="true" class="w-5 h-5 fill-current text-gray-400 group-hover:text-white" viewBox="0 0 24 24"><path clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.531 1.032 1.531 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z" fill-rule="evenodd"></path></svg>
+</a>
+</div>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-3 gap-12">
+<div class="flex flex-col gap-4">
+<h4 class="text-white font-bold text-sm uppercase tracking-wider opacity-80">Product</h4>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Features</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Security</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Enterprise</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Pricing</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-white font-bold text-sm uppercase tracking-wider opacity-80">Company</h4>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">About Us</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Careers</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Blog</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Press</a>
+</div>
+<div class="flex flex-col gap-4">
+<h4 class="text-white font-bold text-sm uppercase tracking-wider opacity-80">Legal</h4>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Privacy</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Terms</a>
+<a class="text-gray-400 hover:text-primary text-sm transition-colors hover:translate-x-1 duration-200" href="#">Cookie Policy</a>
+</div>
+</div>
+</div>
+<div class="border-t border-gray-800 pt-8 flex flex-col md:flex-row items-center justify-between gap-6">
+<p class="text-gray-500 text-sm">© 2024 Smart Wallet Inc. All rights reserved.</p>
+<div class="flex gap-4">
+<span class="size-2 rounded-full bg-green-500 shadow-[0_0_10px_rgba(34,197,94,0.5)]"></span>
+<span class="text-gray-400 text-xs font-mono">System Status: Operational</span>
+</div>
+</div>
+</div>
+</div>
+</footer>
+</div>
+
+</body></html>

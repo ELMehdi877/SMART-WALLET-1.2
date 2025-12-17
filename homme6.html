@@ -1,0 +1,390 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Wallet - L'Ère de la Finance Digitale</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        deep: '#030712',
+                        glass: 'rgba(255, 255, 255, 0.05)',
+                        gold: '#F59E0B',
+                        cyan: '#06B6D4'
+                    },
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    animation: {
+                        'float-slow': 'float 8s ease-in-out infinite',
+                        'float-medium': 'float 6s ease-in-out infinite',
+                        'float-fast': 'float 4s ease-in-out infinite',
+                        'spin-slow': 'spin 15s linear infinite',
+                        'pulse-glow': 'pulse-glow 3s infinite',
+                        'shimmer': 'shimmer 2.5s infinite',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #030712;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        /* --- SUPER KEYFRAMES --- */
+        
+        /* 1. Flottement 3D Complexe */
+        @keyframes float {
+            0%, 100% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            25% { transform: translateY(-15px) rotateX(2deg) rotateY(2deg); }
+            50% { transform: translateY(0px) rotateX(0deg) rotateY(0deg); }
+            75% { transform: translateY(15px) rotateX(-2deg) rotateY(-2deg); }
+        }
+
+        /* 2. Orbite (pour les éléments qui tournent autour des cartes) */
+        @keyframes orbit {
+            0% { transform: rotate(0deg) translateX(120px) rotate(0deg); }
+            100% { transform: rotate(360deg) translateX(120px) rotate(-360deg); }
+        }
+
+        /* 3. Effet de pulsation lumineuse */
+        @keyframes pulse-glow {
+            0%, 100% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.2); }
+            50% { box-shadow: 0 0 50px rgba(6, 182, 212, 0.6); border-color: rgba(6, 182, 212, 0.8); }
+        }
+
+        /* 4. Effet Shimmer (Reflet qui passe) */
+        @keyframes shimmer {
+            0% { transform: translateX(-150%) skewX(-15deg); }
+            100% { transform: translateX(150%) skewX(-15deg); }
+        }
+
+        /* 5. Entrée en scène des cartes (Fan Out) */
+        @keyframes fan-out {
+            0% { transform: translateX(0) rotate(0); opacity: 0; }
+            100% { opacity: 1; } /* La transformation finale est définie dans les classes */
+        }
+
+        /* --- ELEMENTS UTILITAIRES --- */
+        
+        .perspective-container {
+            perspective: 1200px;
+        }
+
+        .card-3d {
+            transform-style: preserve-3d;
+            transition: transform 0.5s ease;
+        }
+
+        .glass-premium {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .text-gradient {
+            background: linear-gradient(135deg, #FFFFFF 0%, #94A3B8 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        .text-gradient-gold {
+            background: linear-gradient(135deg, #FCD34D 0%, #F59E0B 50%, #B45309 100%);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        /* Fond Grid Animé */
+        .bg-grid {
+            background-size: 50px 50px;
+            background-image: linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+                              linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+            mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+        }
+
+        .shimmer-box {
+            position: relative;
+            overflow: hidden;
+        }
+        .shimmer-box::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            animation: shimmer 3s infinite;
+        }
+    </style>
+</head>
+<body class="antialiased">
+
+    <!-- BACKGROUND DYNAMIQUE -->
+    <div class="fixed inset-0 z-0 pointer-events-none">
+        <div class="absolute inset-0 bg-deep"></div>
+        <div class="absolute inset-0 bg-grid"></div>
+        <!-- Orbs lumineux -->
+        <div class="absolute top-[-10%] left-[-10%] w-[600px] h-[600px] bg-cyan-600/20 rounded-full blur-[120px] animate-pulse"></div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[600px] h-[600px] bg-gold/10 rounded-full blur-[120px] animate-pulse"></div>
+    </div>
+
+    <!-- 1️⃣ NAVBAR -->
+    <nav class="fixed w-full z-50 glass-premium border-b-0 border-white/5 top-0 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex justify-between items-center h-20">
+                <!-- Logo -->
+                <div class="flex items-center gap-3">
+                    <div class="relative w-10 h-10 flex items-center justify-center bg-gradient-to-tr from-cyan-600 to-blue-600 rounded-xl shadow-[0_0_15px_rgba(6,182,212,0.5)]">
+                        <i class="fa-solid fa-wallet text-white"></i>
+                        <span class="absolute -top-1 -right-1 flex h-3 w-3">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-cyan-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-3 w-3 bg-cyan-500"></span>
+                        </span>
+                    </div>
+                    <span class="font-bold text-xl tracking-wider text-white">SMART<span class="text-cyan-400">WALLET</span></span>
+                </div>
+
+                <!-- Links -->
+                <div class="hidden md:flex items-center gap-8">
+                    <a href="#features" class="text-sm font-medium text-slate-400 hover:text-white transition">Fonctionnalités</a>
+                    <a href="#security" class="text-sm font-medium text-slate-400 hover:text-white transition">Sécurité</a>
+                    <a href="#cards" class="text-sm font-medium text-slate-400 hover:text-white transition">Cartes</a>
+                </div>
+
+                <!-- Auth -->
+                <div class="flex items-center gap-4">
+                    <a href="login.html" class="hidden md:block text-slate-300 hover:text-white font-medium transition">Connexion</a>
+                    <a href="register.html" class="shimmer-box px-6 py-2.5 bg-white text-deep font-bold rounded-full hover:bg-cyan-50 transition shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                        Commencer
+                    </a>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 2️⃣ HERO SECTION (THE VISUAL MASTERPIECE) -->
+    <section class="relative z-10 min-h-screen flex items-center pt-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-6 w-full">
+            <div class="grid lg:grid-cols-2 gap-16 items-center">
+                
+                <!-- LEFT: TEXT CONTENT -->
+                <div class="space-y-8">
+                    <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-cyan-500/30 bg-cyan-500/10 text-cyan-400 text-xs font-bold uppercase tracking-widest animate-pulse-glow">
+                        <i class="fa-solid fa-bolt"></i> Finance 2.0
+                    </div>
+
+                    <h1 class="text-5xl md:text-7xl font-bold leading-tight">
+                        <span class="text-gradient">L'avenir de</span> <br>
+                        <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 via-blue-500 to-purple-600 animate-pulse">votre Argent.</span>
+                    </h1>
+
+                    <p class="text-slate-400 text-lg max-w-lg leading-relaxed">
+                        Une seule application pour gérer vos cartes, vos crypto-monnaies et vos transferts internationaux. Sécurité de niveau militaire, design de niveau spatial.
+                    </p>
+
+                    <div class="flex flex-col sm:flex-row gap-5">
+                        <a href="register.html" class="group relative px-8 py-4 bg-gradient-to-r from-cyan-600 to-blue-600 rounded-xl font-bold text-white shadow-[0_0_30px_rgba(6,182,212,0.4)] hover:shadow-[0_0_50px_rgba(6,182,212,0.6)] transition transform hover:-translate-y-1">
+                            Ouvrir un compte gratuit
+                            <i class="fa-solid fa-arrow-right ml-2 group-hover:translate-x-1 transition"></i>
+                        </a>
+                        <a href="#demo" class="px-8 py-4 rounded-xl border border-white/10 hover:bg-white/5 transition flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-white text-deep flex items-center justify-center"><i class="fa-solid fa-play text-xs"></i></div>
+                            <span>Voir la démo</span>
+                        </a>
+                    </div>
+
+                    <div class="pt-8 border-t border-white/10 flex gap-8">
+                        <div>
+                            <div class="text-2xl font-mono font-bold text-white">2M+</div>
+                            <div class="text-xs text-slate-500 uppercase">Utilisateurs</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-mono font-bold text-cyan-400">0.00s</div>
+                            <div class="text-xs text-slate-500 uppercase">Latence</div>
+                        </div>
+                        <div>
+                            <div class="text-2xl font-mono font-bold text-gold">5%</div>
+                            <div class="text-xs text-slate-500 uppercase">Cashback</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGHT: SUPER ANIMATED CARDS STACK -->
+                <div class="perspective-container h-[600px] flex items-center justify-center relative">
+                    
+                    <!-- Effet de halo derrière -->
+                    <div class="absolute w-[400px] h-[400px] bg-cyan-500/20 rounded-full blur-[80px] animate-pulse"></div>
+
+                    <!-- CARTE 1: Back (Gold) -->
+                    <div class="absolute w-[340px] h-[220px] bg-gradient-to-br from-yellow-700 to-yellow-900 rounded-2xl border border-gold/30 shadow-2xl z-10 animate-float-slow" style="animation-delay: 0s; transform: translateX(60px) translateY(-40px) rotateZ(10deg) translateZ(-50px);">
+                        <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-20 mix-blend-overlay"></div>
+                    </div>
+
+                    <!-- CARTE 2: Middle (Black Matte) -->
+                    <div class="absolute w-[340px] h-[220px] bg-gradient-to-br from-gray-800 to-black rounded-2xl border border-white/10 shadow-2xl z-20 animate-float-medium" style="animation-delay: 1s; transform: translateX(30px) translateY(-20px) rotateZ(5deg) translateZ(0px);">
+                         <div class="p-6 flex flex-col justify-between h-full relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full blur-2xl"></div>
+                            <div class="flex justify-between items-start">
+                                <i class="fa-solid fa-wifi text-slate-600 rotate-90"></i>
+                                <span class="font-bold text-slate-600 italic">BLACK</span>
+                            </div>
+                         </div>
+                    </div>
+
+                    <!-- CARTE 3: Front (Glass/Holographic - THE HERO) -->
+                    <div class="absolute w-[360px] h-[230px] rounded-2xl border border-white/20 shadow-[0_20px_60px_rgba(0,0,0,0.7)] z-30 animate-float-fast backdrop-blur-xl bg-gradient-to-br from-white/10 to-white/5 overflow-hidden group">
+                        
+                        <!-- Shine Effect on Card -->
+                        <div class="absolute inset-0 bg-gradient-to-tr from-transparent via-white/20 to-transparent translate-x-[-150%] animate-shimmer"></div>
+                        
+                        <div class="relative p-6 h-full flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/2/2a/Mastercard-logo.svg/1280px-Mastercard-logo.svg.png" class="h-8 opacity-90" alt="Mastercard">
+                                <i class="fa-solid fa-wifi text-white/80 rotate-90 text-xl"></i>
+                            </div>
+                            
+                            <div class="font-mono text-2xl tracking-widest text-white text-shadow-lg">
+                                **** **** **** 4289
+                            </div>
+                            
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="text-[10px] text-cyan-200 uppercase tracking-wider mb-1">Titulaire</div>
+                                    <div class="font-bold text-white tracking-wide">JOHN DOE</div>
+                                </div>
+                                <div class="text-right">
+                                    <div class="text-[10px] text-cyan-200 uppercase tracking-wider mb-1">Valide</div>
+                                    <div class="font-bold text-white tracking-wide">12/28</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- FLOATING ELEMENTS (ORBITING) -->
+                    <!-- Notification Revenu -->
+                    <div class="absolute top-[20%] right-[-5%] glass-premium px-4 py-2 rounded-lg flex items-center gap-3 animate-float-medium z-40 border-l-4 border-green-500">
+                        <div class="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center text-green-400">
+                            <i class="fa-solid fa-arrow-down"></i>
+                        </div>
+                        <div>
+                            <div class="text-[10px] text-slate-400 uppercase">Reçu</div>
+                            <div class="font-bold text-green-400 text-sm">+$1,250.00</div>
+                        </div>
+                    </div>
+
+                    <!-- Bouclier Sécurité -->
+                    <div class="absolute bottom-[10%] left-[-5%] glass-premium p-3 rounded-xl flex items-center gap-3 animate-float-slow z-40 border border-cyan-500/30">
+                        <i class="fa-solid fa-shield-halved text-cyan-400 text-xl"></i>
+                        <span class="font-bold text-xs">Secured</span>
+                    </div>
+
+                    <!-- Coin 3D (Pure CSS) -->
+                    <div class="absolute top-0 left-0 w-16 h-16 rounded-full bg-gradient-to-br from-yellow-300 to-yellow-600 shadow-[0_0_20px_rgba(250,204,21,0.6)] animate-bounce z-50 flex items-center justify-center border-2 border-yellow-200">
+                        <span class="font-bold text-yellow-900 text-xl">$</span>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 3️⃣ CARDS / FEATURES GRID (BENTO STYLE) -->
+    <section id="features" class="py-24 relative bg-deep/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <h2 class="text-3xl md:text-5xl font-bold mb-4">Plus qu'un simple <span class="text-cyan-400">Wallet</span>.</h2>
+                <p class="text-slate-400">Un écosystème complet pour votre indépendance financière.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6 grid-rows-2 h-auto md:h-[600px]">
+                
+                <!-- Card Large 1: Analytics -->
+                <div class="md:col-span-2 md:row-span-2 glass-premium rounded-3xl p-8 relative overflow-hidden group hover:border-cyan-500/50 transition duration-500">
+                    <div class="absolute top-0 right-0 w-64 h-64 bg-cyan-600/10 rounded-full blur-3xl group-hover:bg-cyan-600/20 transition"></div>
+                    <h3 class="text-2xl font-bold mb-2">Analytics en Temps Réel</h3>
+                    <p class="text-slate-400 mb-8 max-w-sm">Visualisez vos flux financiers avec des graphiques dynamiques.</p>
+                    
+                    <!-- Fake Graph UI -->
+                    <div class="absolute bottom-0 left-0 w-full px-8 pb-8 flex items-end justify-between gap-2 h-40 opacity-60 group-hover:opacity-100 transition">
+                        <div class="w-full bg-cyan-500/20 rounded-t h-[30%] animate-pulse"></div>
+                        <div class="w-full bg-cyan-500/40 rounded-t h-[50%] animate-pulse" style="animation-delay: 0.2s"></div>
+                        <div class="w-full bg-cyan-500/60 rounded-t h-[80%] animate-pulse" style="animation-delay: 0.4s"></div>
+                        <div class="w-full bg-cyan-500/30 rounded-t h-[40%] animate-pulse" style="animation-delay: 0.1s"></div>
+                        <div class="w-full bg-cyan-400 rounded-t h-[90%] shadow-[0_0_20px_rgba(6,182,212,0.5)]"></div>
+                    </div>
+                </div>
+
+                <!-- Card 2: Security -->
+                <div class="md:col-span-1 md:row-span-1 glass-premium rounded-3xl p-6 flex flex-col justify-center items-center text-center group hover:bg-white/5 transition border-t-4 border-green-500">
+                    <div class="w-14 h-14 rounded-full bg-green-500/10 flex items-center justify-center text-green-400 text-2xl mb-4 group-hover:scale-110 transition">
+                        <i class="fa-solid fa-fingerprint"></i>
+                    </div>
+                    <h4 class="font-bold text-lg">Biométrique</h4>
+                    <p class="text-xs text-slate-400 mt-2">FaceID & TouchID Ready</p>
+                </div>
+
+                <!-- Card 3: Cards Management -->
+                <div class="md:col-span-1 md:row-span-1 glass-premium rounded-3xl p-6 relative group overflow-hidden hover:border-gold/50 transition">
+                    <div class="absolute -right-4 -top-4 text-8xl text-gold/10 rotate-12 group-hover:rotate-0 transition duration-500">
+                        <i class="fa-brands fa-cc-visa"></i>
+                    </div>
+                    <div class="relative z-10 mt-12">
+                        <h4 class="font-bold text-lg text-gold">Multi-Cartes</h4>
+                        <p class="text-xs text-slate-400 mt-1">Gérez illimité</p>
+                    </div>
+                </div>
+
+                <!-- Card Wide: Transfer -->
+                <div class="md:col-span-2 md:row-span-1 glass-premium rounded-3xl p-6 flex items-center justify-between group hover:border-purple-500/50 transition">
+                    <div>
+                        <div class="inline-flex px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-bold mb-3">
+                            NOUVEAU
+                        </div>
+                        <h3 class="text-xl font-bold">Transfert Instantané</h3>
+                        <p class="text-slate-400 text-sm mt-1">Envoyez de l'argent par Email ou ID.</p>
+                    </div>
+                    <div class="w-16 h-16 rounded-full bg-purple-600 flex items-center justify-center text-2xl shadow-[0_0_20px_rgba(147,51,234,0.5)] group-hover:rotate-45 transition duration-500">
+                        <i class="fa-solid fa-paper-plane"></i>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 4️⃣ CTA FOOTER -->
+    <section class="py-20 border-t border-white/5 bg-black">
+        <div class="max-w-4xl mx-auto px-6 text-center">
+            <h2 class="text-4xl font-bold mb-8">Rejoignez l'élite.</h2>
+            <div class="flex justify-center gap-4">
+                <a href="register.html" class="px-10 py-4 bg-white text-black font-bold rounded-full hover:scale-105 transition shadow-[0_0_30px_rgba(255,255,255,0.3)]">
+                    Créer mon compte
+                </a>
+            </div>
+            <p class="mt-8 text-slate-500 text-sm">&copy; 2025 Smart Wallet Inc. All rights reserved.</p>
+        </div>
+    </section>
+
+</body>
+</html>
