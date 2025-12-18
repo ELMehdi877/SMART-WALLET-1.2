@@ -1,40 +1,119 @@
 DROP DATABASE IF EXISTS smart_wallet;
+
 CREATE DATABASE IF NOT EXISTS smart_wallet;
+
 use smart_wallet;
 
-DROP TABLE IF EXISTS incomes;
-CREATE TABLE if not exists incomes(
-    id int PRIMARY key AUTO_INCREMENT,
-    categorie VARCHAR(30) not null,
-    montants DECIMAL(10,2) not null check (montants > 0),
-    description VARCHAR(35) not null,
-    date DATE DEFAULT (CURRENT_DATE)
-);
+#creation de tableau users
+DROP TABLE IF EXISTS users;
 
-DROP TABLE IF EXISTS expenses;
-CREATE TABLE if not exists expenses(
-    id int PRIMARY key AUTO_INCREMENT,
-    categorie VARCHAR(30) not null,
-    montants DECIMAL(10,2) not null check (montants > 0),
-    description VARCHAR(35) not null,
-    date DATE DEFAULT (CURRENT_DATE)
-);
-
-CREATE TABLE users (
+CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL
+    email VARCHAR(30) NOT NULL UNIQUE,
+    fullname VARCHAR(20) NOT NULL,
+    password VARCHAR(20) NOT NULL
+);
+
+#creation de tableau code_OTP
+DROP TABLE IF EXISTS code_OTP;
+
+CREATE TABLE IF NOT EXISTS code_OTP (
+    id int AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    CONSTRAINT fk_codeOTP_user FOREIGN KEY (user_id) REFERENCES users (id),
+    code INT,
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP),
+    expires_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
+
+#creation de tableau cards
+DROP TABLE IF EXISTS cards;
+
+CREATE TABLE IF NOT EXISTS cards (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT,
+    CONSTRAINT fk_cards_user FOREIGN KEY (user_id) REFERENCES users (id),
+    card_name VARCHAR(15) NOT NULL,
+    bank_name VARCHAR(15) NOT NULL,
+    balance DECIMAL(12, 2) CHECK (balance > 0),
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
+
+#creation de tableau transfers
+DROP Table if EXISTS transfers;
+
+CREATE Table IF NOT EXISTS transfers (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sender_id INT,
+    CONSTRAINT fk_transfers_sender FOREIGN KEY (sender_id) REFERENCES users (id),
+    receiver_id INT,
+    CONSTRAINT fk_transfers_receiver FOREIGN KEY (receiver_id) REFERENCES users (id),
+    sender_card_id INT,
+    CONSTRAINT fk_transfers_sender_card FOREIGN KEY (sender_card_id) REFERENCES cards (id),
+    receiver_card_id INT,
+    CONSTRAINT fk_transfers_receiver_card FOREIGN KEY (receiver_card_id) REFERENCES cards (id),
+    amount DECIMAL(10, 2) CHECK (amount > 0),
+    description VARCHAR(50) NOT NULL,
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
+
+#creation de tableau incomses
+DROP TABLE IF EXISTS incomes;
+CREATE TABLE if not exists incomes (
+    id int PRIMARY key AUTO_INCREMENT,
+    card_id INT,
+    CONSTRAINT fk_incomes_cards FOREIGN KEY (card_id) REFERENCES cards (id),
+    montants DECIMAL(10, 2) not null check (montants > 0),
+    description VARCHAR(35) not null,
+    date DATE DEFAULT(CURRENT_DATE),
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
+
+#creation de tableau category
+DROP TABLE IF EXISTS category;
+CREATE TABLE if not exists category (
+    id int PRIMARY key AUTO_INCREMENT,
+    user_id INT,
+    CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
+    name VARCHAR(35) not null,
+    description VARCHAR(35) not null,
+    monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
+
+#creation de tableau expenses
+DROP TABLE IF EXISTS expenses;
+CREATE TABLE if not exists expenses (
+    id int PRIMARY key AUTO_INCREMENT,
+    card_id INT,
+    CONSTRAINT fk_expenses_cards FOREIGN KEY (card_id) REFERENCES cards (id),
+    category_id INT,
+    CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
+    montants DECIMAL(10, 2) not null check (montants > 0),
+    description VARCHAR(35) not null,
+    date DATE DEFAULT(CURRENT_DATE),
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
 
-insert into incomes (montants, categorie, description) 
+
+
+insert into
+    incomes (
+        montants,
+        categorie,
+        description
+    )
 values (55.5, "t9diya", "khizo btata"),
-(55.5, "t9diya", "khizo btata"),
-(55.5, "t9diya", "khizo btata");
+    (55.5, "t9diya", "khizo btata"),
+    (55.5, "t9diya", "khizo btata");
 
 select * from incomes;
+
 select * from expenses;
+
 delete from incomes;
+
 select * from users;
+
 show tables;
-CREATE DATABASE IF NOT EXISTS finance_manager;
