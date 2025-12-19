@@ -1,3 +1,17 @@
+<?php
+session_start();
+$pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
+
+if($_SERVER["REQUEST_METHOD"] === "POST"){
+    if (isset($_POST["sign_up_email"]) && isset($_POST["sign_up_fullname"]) && isset($_POST["sign_up_password"])) {
+        $sign_up_fullname = trim($_POST["sign_up_fullname"]);
+        $sign_up_email = trim($_POST["sign_up_email"]);
+        $hashedPassword = password_hash($_POST["sign_up_password"], PASSWORD_DEFAULT);
+        $_SESSION["user"]=[$sign_up_fullname,$sign_up_email,$hashedPassword];
+    } 
+}
+?>
+
 <!DOCTYPE html>
 <html lang="fr">
 <head>
@@ -252,7 +266,7 @@
 
                 <!-- Nom Complet -->
                 <div class="relative">
-                    <input type="text" id="name" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Nom">
+                    <input type="text" id="name" name="sign_up_fullname" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Nom">
                     <label for="name" class="absolute left-4 top-3 text-slate-500 text-sm transition-all pointer-events-none flex items-center gap-2">
                         <i class="fa-regular fa-user"></i> Nom complet
                     </label>
@@ -260,7 +274,7 @@
 
                 <!-- Email -->
                 <div class="relative">
-                    <input type="email" id="email" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Email">
+                    <input type="email" id="email" name="sign_up_email" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Email">
                     <label for="email" class="absolute left-4 top-3 text-slate-500 text-sm transition-all pointer-events-none flex items-center gap-2">
                         <i class="fa-regular fa-envelope"></i> Adresse Email
                     </label>
@@ -268,7 +282,7 @@
 
                 <!-- Mot de passe -->
                 <div class="relative">
-                    <input type="password" id="password" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Password">
+                    <input type="password" id="password" name="sign_up_password" class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium" placeholder="Password">
                     <label for="password" class="absolute left-4 top-3 text-slate-500 text-sm transition-all pointer-events-none flex items-center gap-2">
                         <i class="fa-solid fa-lock"></i> Mot de passe
                     </label>
@@ -338,3 +352,5 @@
     </script>
 </body>
 </html>
+
+

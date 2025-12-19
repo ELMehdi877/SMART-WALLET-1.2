@@ -1,3 +1,11 @@
+<?php
+session_start();
+$pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
+$_login =$_POST["login"]
+if($_SERVER["REQUEST_METHOD"] === "POST"){
+    
+}
+?>
 <!DOCTYPE html>
 <html lang="fr">
 
