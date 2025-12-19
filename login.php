@@ -1,9 +1,23 @@
 <?php
 session_start();
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
-$_login =$_POST["login"]
 if($_SERVER["REQUEST_METHOD"] === "POST"){
-    
+    if (isset($_POST["login_email"]) && isset($_POST["login_password"])) {
+        $login_password = $_POST["login_password"];
+        $login_email = trim($_POST["login_email"]);
+
+        $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
+        $stmt->execute([$login_email]);
+        $user_existe = $stmt->fetch(PDO::FETCH_ASSOC);
+        if ($user_existe && password_verify($login_password,$user_existe['password'])) {
+            $_SESSION['user_existe'] = [$user_existe['id']];
+            // echo "valider";
+            header("Location: dashbord.php");
+        }
+        else {
+            echo "non valider";   
+        }
+    }
 }
 ?>
 <!DOCTYPE html>
@@ -370,11 +384,11 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
             </div>
 
             <!-- FORMULAIRE -->
-            <form action="#" class="space-y-5">
+            <form action="login.php" method="POST" class="space-y-5">
 
                 <!-- Email -->
                 <div class="relative">
-                    <input type="email" id="email"
+                    <input type="email" name="login_email" id="email"
                         class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium"
                         placeholder="Email">
                     <label for="email"
@@ -385,7 +399,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
                 <!-- Mot de passe -->
                 <div class="relative">
-                    <input type="password" id="password"
+                    <input type="password" name="login_password" id="password"
                         class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium"
                         placeholder="Password">
                     <label for="password"
@@ -407,7 +421,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                 </div>
 
                 <!-- Bouton Connexion -->
-                <button type="submit"
+                <button type="submit" name="login"
                     class="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-gold-300 via-gold-500 to-gold-400 shadow-[0_10px_30px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_rgba(234,179,8,0.5)] transform hover:-translate-y-1 transition duration-300 btn-shine-effect animate-pulse-gold tracking-wide uppercase text-sm relative overflow-hidden">
                     Se connecter
                 </button>

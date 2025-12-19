@@ -1,13 +1,17 @@
 <?php
 session_start();
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
-
 if($_SERVER["REQUEST_METHOD"] === "POST"){
     if (isset($_POST["sign_up_email"]) && isset($_POST["sign_up_fullname"]) && isset($_POST["sign_up_password"])) {
+        $_SESSION=[];
+
         $sign_up_fullname = trim($_POST["sign_up_fullname"]);
         $sign_up_email = trim($_POST["sign_up_email"]);
         $hashedPassword = password_hash($_POST["sign_up_password"], PASSWORD_DEFAULT);
+        
         $_SESSION["user"]=[$sign_up_fullname,$sign_up_email,$hashedPassword];
+        $stmt = $pdo->prepare("INSERT INTO users(fullname,email,password) VALUES (?,?,?)");
+        $stmt->execute($_SESSION["user"]);
     } 
 }
 ?>
@@ -262,7 +266,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
             </div>
 
             <!-- FORMULAIRE -->
-            <form action="#" class="space-y-6">
+            <form action="sign_up.php" method="POST" class="space-y-6">
 
                 <!-- Nom Complet -->
                 <div class="relative">

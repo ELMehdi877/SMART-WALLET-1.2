@@ -1,5 +1,6 @@
 <?php session_start(); 
 
+$id_user = $_SESSION['user_existe'];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
 $incomeData = array_fill(0, 12, 0);
@@ -179,7 +180,7 @@ foreach ($depenses as $row) {
                             <div>
                                 <p class="text-sm text-slate-600 font-medium mb-1">Total Revenus</p>
                                 <?php 
-                                $stmt = $pdo->query("SELECT SUM(montants) AS total_revenu FROM incomes");
+                                $stmt = $pdo->query("SELECT SUM(montants) AS total_revenu FROM incomes ");
                                 $results = $stmt->fetch(PDO::FETCH_ASSOC);
                                 $total_revenu = $results['total_revenu'] ?? 0 ;
                                 echo "<p id='totalIncome' class='text-3xl font-bold text-green-500'> {$total_revenu} MAD</p>";
