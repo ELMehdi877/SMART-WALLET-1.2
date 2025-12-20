@@ -1,11 +1,16 @@
 <?php
 session_start();
 $user_id = $_SESSION["user_existe"][0];
+if (!isset($_SESSION["user_existe"])) {
+    header("Location: index.php");
+    exit;
+}
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
 //add card
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
-    if (isset($_POST["bank_name"]) && isset($_POST["card_name"]) && isset($_POST["last_4"]) && isset($_POST["balance"])) {
+
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
+    if (isset($_POST["add_card"]) && isset($_POST["bank_name"]) && isset($_POST["card_name"]) && isset($_POST["last_4"]) && isset($_POST["balance"])) {
         $bank_name = $_POST["bank_name"];
         $card_name = $_POST["card_name"];
         $last_4 = $_POST["last_4"];
@@ -13,14 +18,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
         $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance) VALUES (?,?,?,?,?)");
         $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance]);
     }
+    //delete card
+    if (isset($_POST["delete_card_id"])) {
+        $delete_card_id = $_POST["delete_card_id"];
+        $stmt = $pdo->prepare("DELETE FROM cards WHeRE id = ?");
+        $stmt->execute([$delete_card_id]);
+    }
 }
 
-//delete card
-if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_card_id"])) {
-    $delete_card_id = $_POST["delete_card_id"];
-    $stmt = $pdo->prepare("DELETE FROM cards WHeRE id = ?");
-    $stmt->execute([$delete_card_id]);
-}
+
+
+
 ?>
 <!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
@@ -306,7 +314,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_card_id"])) {
             </div>
 
             
-            <form action="logout.php">
+            <form action="logout.php" method="POST">
                 <button type="submit" name="logout"
                 style="animation-delay: 0.3s; opacity: 0;" class="btn-hover-effect btn-shine-anim mobile-link btn-hover-effect btn-shine-anim px-8 py-4 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
                 >
@@ -569,13 +577,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_card_id"])) {
                 <!-- Numéro Carte -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">4 Derniers chiffres</label>
-                    <input type="text" name="last_4" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    <input type="text" required name="last_4" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                 </div>
 
                 <!-- Solde Initial -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Solde Initial</label>
-                    <input type="number" name="balance" step="0.01" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
+                    <input type="number" required name="balance" step="0.01" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
                 </div>
 
                 <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
