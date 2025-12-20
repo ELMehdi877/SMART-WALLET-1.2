@@ -5,7 +5,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
     if (isset($_POST["bank_name"]) && isset($_POST["card_name"])) {
-        $bank_name = $_POST["bank_name"]
+        $bank_name = $_POST["bank_name"];
         $card_name = $_POST["card_name"];
         $balance = $_POST["balance"];
         $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,balance) VALUES (?,?,?,?)");
