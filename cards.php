@@ -1,28 +1,34 @@
 <?php
 session_start();
-$user_id = $_SESSION["user_existe"][0];
 if (!isset($_SESSION["user_existe"])) {
     header("Location: index.php");
     exit;
 }
+$user_id = $_SESSION["user_existe"][0];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
 //add card
 
-if ($_SERVER["REQUEST_METHOD"] === "POST") {
+if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     if (isset($_POST["add_card"]) && isset($_POST["bank_name"]) && isset($_POST["card_name"]) && isset($_POST["last_4"]) && isset($_POST["balance"])) {
         $bank_name = $_POST["bank_name"];
         $card_name = $_POST["card_name"];
         $last_4 = $_POST["last_4"];
         $balance = $_POST["balance"];
         $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance) VALUES (?,?,?,?,?)");
+
         $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance]);
+        header("Location: cards.php");
+        exit();
     }
     //delete card
     if (isset($_POST["delete_card_id"])) {
         $delete_card_id = $_POST["delete_card_id"];
-        $stmt = $pdo->prepare("DELETE FROM cards WHeRE id = ?");
+        $stmt = $pdo->prepare("DELETE FROM cards WHERE id = ?");
         $stmt->execute([$delete_card_id]);
+
+        header("Location: cards.php");
+        exit;
     }
 }
 
@@ -555,18 +561,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <span class="w-1 h-6 bg-gold-400 rounded-full"></span> Affecter un Revenu
                 </h3>
-                <form action="database.php" method="POST" class="space-y-4">
+                <form action="incomes.php" method="POST" class="space-y-4">
                     
-                    <div>
+                    <!-- <div>
                         <label class="text-xs text-slate-400 uppercase font-bold ml-1">Sélectionner un Revenu</label>
-                        <select name="income_id" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 transition">
-                            <option value="" disabled selected>Choisir dans la liste...</option>
-                            <!-- Exemple PHP Loop -->
-                            <option value="1">Salaire Janvier (+ 15,000 DH)</option>
-                            <option value="2">Freelance Upwork (+ 2,400 DH)</option>
+                        <select name="income_category" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 transition">
+                            <option value="" disabled selected>Choisir une catégorie</option>
+                            <option value="ALL">ALL</option>
+                            <option value="Salaire">Salaire</option>
+                            <option value="Prime">Prime</option>
+                            <option value="Bonus">Bonus</option>
+                            <option value="Revenus freelancing">Revenus freelancing</option>
                         </select>
+                        
+                    </div> -->
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
+                        <input type="number" required name="income_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
-
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">description</label>
+                        <input type="text" required name="income_description" placeholder="description" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
+                        <input type="date" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
                     <div class="flex justify-center my-2">
                         <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
                     </div>
@@ -575,7 +595,32 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                         <label class="text-xs text-slate-400 uppercase font-bold ml-1">Vers la Carte</label>
                         <div class="grid grid-cols-2 gap-3 mt-1">
                             <!-- Option Radio Stylisée -->
+
                             <label class="cursor-pointer">
+                                <input type="radio" name="card_id" value="0" class="peer sr-only">
+                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                                    <span class="text-xs font-bold">1er card</span>
+                                </div>
+                            </label>
+                            <?php
+                            $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
+                            $stmt->execute([$user_id]);
+                            
+                            $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            foreach($cards as $card){
+                            echo '<label class="cursor-pointer">
+                                    <input type="radio" name="card_id" value="'.$card['id'].'" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                                        <span class="text-xs font-bold">'.$card['card_name'].'</span>
+                                    </div>
+                                </label>';
+                                }
+                            
+                            ?>
+                            <!-- <label class="cursor-pointer">
                                 <input type="radio" name="card_target" value="cih" class="peer sr-only">
                                 <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
                                     <span class="w-3 h-3 rounded-full bg-orange-500"></span>
@@ -588,11 +633,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                                     <span class="w-3 h-3 rounded-full bg-amber-700"></span>
                                     <span class="text-xs font-bold">B. Populaire</span>
                                 </div>
-                            </label>
+                            </label> -->
                         </div>
                     </div>
 
-                    <button type="submit" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gold-400 transition shadow-lg">
+                    <button type="submit" name="income_affect" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gold-400 transition shadow-lg">
                         Valider l'affectation
                     </button>
                 </form>
@@ -700,7 +745,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
                 <!-- Numéro Carte -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">4 Derniers chiffres</label>
-                    <input type="text" required name="last_4" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    <input type="text" required name="last_4" maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                 </div>
 
                 <!-- Solde Initial -->

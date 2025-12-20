@@ -1,7 +1,7 @@
 <?php session_start(); 
 
-$id_user = $_SESSION['user_existe'];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
+$id_user = $_SESSION['user_existe'];
 
 $incomeData = array_fill(0, 12, 0);
 $expenseData = array_fill(0, 12, 0);

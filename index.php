@@ -486,7 +486,7 @@
 
                 <!-- Auth Actions (Desktop) -->
                 <div class="hidden md:flex items-center gap-6">
-                    <a href="login.html" class="text-sm font-medium text-slate-300 hover:text-gold-400 transition">Se
+                    <a href="login.php" class="text-sm font-medium text-slate-300 hover:text-gold-400 transition">Se
                         connecter</a>
                     <a href="sign_up.php"
                         class="btn-hover-effect btn-shine-anim px-6 py-3 rounded-full bg-white text-dark-900 font-bold text-sm hover:bg-gold-400 hover:text-black transition duration-300 shadow-[0_0_20px_rgba(255,255,255,0.2)]">
