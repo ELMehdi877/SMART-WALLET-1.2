@@ -31,7 +31,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <script>
+    <!-- <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -73,7 +73,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
                 }
             }
         }
-    </script>
+    </script> -->
 
     <style>
         body {
@@ -181,6 +181,68 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
         ::-webkit-scrollbar-track { background: #050505; }
         ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
         ::-webkit-scrollbar-thumb:hover { background: #FACC15; }
+
+        /* --- ANIMATIONS MENU MOBILE (C'est ici qu'il manquait les keyframes) --- */
+        
+        /* 1. Révélation circulaire */
+        @keyframes menu-reveal {
+            0% { opacity: 0; clip-path: circle(0% at calc(100% - 40px) 40px); }
+            100% { opacity: 1; clip-path: circle(150% at calc(100% - 40px) 40px); }
+        }
+
+        /* 2. Cascade des liens */
+        @keyframes link-stagger {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Styles du bouton Hamburger */
+        .menu-toggle-btn { width: 40px; height: 40px; position: relative; z-index: 50; border: none; background: transparent; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .hamburger-line { position: absolute; width: 24px; height: 2px; background-color: #FACC15; border-radius: 2px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .line-1 { transform: translateY(-8px); width: 24px; }
+        .line-2 { transform: translateY(0); width: 16px; margin-left: 8px; }
+        .line-3 { transform: translateY(8px); width: 10px; margin-left: 14px; }
+        
+        /* État Active (Croix) */
+        .menu-toggle-btn.active .line-1 { transform: translateY(0) rotate(45deg); background-color: #FFF; }
+        .menu-toggle-btn.active .line-2 { opacity: 0; transform: translateX(-20px); }
+        .menu-toggle-btn.active .line-3 { transform: translateY(0) rotate(-45deg); width: 24px; margin-left: 0; background-color: #FFF; }
+
+        /* Styles de l'Overlay (Menu plein écran) */
+        .mobile-menu-overlay { 
+            position: fixed; inset: 0; 
+            background-color: rgba(27, 26, 26, 0.95); /* Fond très sombre */
+            backdrop-filter: blur(20px); 
+            z-index: 40; 
+            display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            pointer-events: none; opacity: 0; transition: opacity 0.3s ease; 
+        }
+        
+        /* Quand le menu est ouvert (Ajout de la classe .open via JS) */
+        .mobile-menu-overlay.open { 
+            pointer-events: auto; 
+            animation: menu-reveal 0.6s cubic-bezier(0.77, 0, 0.175, 1) forwards; 
+        }
+        
+        /* Animation des liens quand le menu est ouvert */
+        .mobile-menu-overlay.open .mobile-link { 
+            animation: link-stagger 0.5s ease forwards; 
+        }
+        
+        /* Bouton Shine Animation */
+        @keyframes shine-move {
+            0% { transform: skewX(-25deg) translateX(-200%); }
+            100% { transform: skewX(-25deg) translateX(200%); }
+        }
+        @keyframes btn-pulse-gold {
+            0% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(234, 179, 8, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(234, 179, 8, 0); }
+        }
+        .btn-shine-anim { position: relative; overflow: hidden; animation: btn-pulse-gold 2s infinite; }
+        .btn-shine-anim::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent); transform: skewX(-25deg) translateX(-200%); animation: shine-move 4s infinite ease-in-out; pointer-events: none; }
+        .btn-hover-effect { transition: all 0.3s ease; }
+        .btn-hover-effect:hover { transform: scale(1.05); }
     </style>
 </head>
 
@@ -204,8 +266,44 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
             <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
             </div>
+            
+             <!-- BOUTON TOGGLE MOBILE (Visible sur mobile uniquement) -->
+                <button class="menu-toggle-btn md:hidden" id="menuToggle" aria-label="Menu">
+                    <span class="hamburger-line line-1"></span>
+                    <span class="hamburger-line line-2"></span>
+                    <span class="hamburger-line line-3"></span>
+                </button>
         </div>
     </nav>
+
+    <!-- 📱 MENU MOBILE OVERLAY (Code HTML du menu plein écran) -->
+    <div class="mobile-menu-overlay lg:hidden md:hidden" id="mobileMenu">
+        <!-- Fond décoratif -->
+        <div class="absolute top-0 right-0 w-64 h-64 bg-gold-600/10 rounded-full blur-[80px]"></div>
+        <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600/10 rounded-full blur-[80px]"></div>
+
+        <div class="flex flex-col items-center gap-8 text-center z-10">
+            <a href="#benefits"
+                class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
+                style="animation-delay: 0.1s; opacity: 0;">Dashboard</a>
+            <a href="#security"
+                class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
+                style="animation-delay: 0.2s; opacity: 0;">Mes Cartes</a>
+            <a href="#business"
+                class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
+                style="animation-delay: 0.3s; opacity: 0;">Revenus</a>
+
+            <div class="w-12 h-1 bg-white/10 rounded-full my-4 mobile-link" style="animation-delay: 0.4s; opacity: 0;">
+            </div>
+
+            
+            <a href="sign_up.php"
+                style="animation-delay: 0.3s; opacity: 0;" class="btn-hover-effect btn-shine-anim mobile-link btn-hover-effect btn-shine-anim px-8 py-4 bg-gold-500 text-black font-bold rounded-full shadow-xl"
+                >
+                Ouvrir un compte
+            </a>
+        </div>
+    </div>
 
     <!-- MAIN CONTENT -->
     <main class="pt-28 pb-12 px-4 max-w-7xl mx-auto space-y-8">
@@ -227,6 +325,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
             <!-- CARTE 1: CIH (Exemple) -->
              
             <?php
+            
                 echo '
                 <div class="group perspective animate-card-enter" style="animation-delay: 0.1s;">
                     <div class="credit-card card-cih" onclick="this.classList.toggle(\'flipped\')">
@@ -286,43 +385,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
                 ';
             ?>
 
-
-            <!-- CARTE 2: Banque Populaire -->
-            <div class="group perspective animate-card-enter" style="animation-delay: 0.2s;">
-                <div class="credit-card card-bp" onclick="this.classList.toggle('flipped')">
-                    <div class="card-texture"></div>
-                    <!-- FRONT -->
-                    <div class="card-front p-6 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <div class="chip"></div>
-                            <i class="fa-solid fa-wifi rotate-90 text-white/70 text-2xl"></i>
-                        </div>
-                        <div class="text-center">
-                            <div class="text-white/80 text-xs uppercase tracking-widest mb-1">Solde Actuel</div>
-                            <div class="text-3xl font-mono font-bold text-white drop-shadow-md">4,200 <span class="text-sm">DH</span></div>
-                        </div>
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-white/60 text-[10px] uppercase font-bold">Titulaire</div>
-                                <div class="text-white font-mono tracking-wider text-sm">MEHDI EL M.</div>
-                            </div>
-                            <i class="fa-brands fa-cc-mastercard text-4xl text-white"></i>
-                        </div>
-                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/40 font-mono text-sm tracking-[0.2em]">**** 8821</div>
-                    </div>
-                    <!-- BACK -->
-                    <div class="card-back">
-                        <div class="magnetic-strip"></div>
-                        <div class="px-6">
-                            <div class="bg-white/20 h-8 w-full flex items-center justify-end px-2 text-black font-mono font-bold italic">
-                                998
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            
 
             <!-- CARTE 3: Ajouter (Placeholder visuel) -->
             <div onclick="openModal('addCardModal')" class="border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center p-6 cursor-pointer hover:border-gold-500/50 hover:bg-gold-500/5 transition group h-full min-h-[220px]">
@@ -506,8 +568,76 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
     </div>
 
     <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        dark: {
+                            900: '#050505',
+                            800: '#0A0A0A',
+                            card: 'rgba(20, 20, 20, 0.6)'
+                        },
+                        gold: {
+                            400: '#FACC15',
+                            500: '#EAB308',
+                            glow: 'rgba(250, 204, 21, 0.15)'
+                        }
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'card-enter': 'cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                        'shimmer': 'shimmer 3s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        },
+                        cardEnter: {
+                            '0%': { opacity: '0', transform: 'translateY(50px) scale(0.9)' },
+                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
+                        },
+                        shimmer: {
+                            '0%': { transform: 'translateX(-150%) skewX(-15deg)' },
+                            '100%': { transform: 'translateX(150%) skewX(-15deg)' },
+                        }
+                    }
+                }
+            }
+        }
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+        const menuBtn = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        const mobileLinks = document.querySelectorAll('.mobile-link');
+
+        menuBtn.addEventListener('click', () => {
+            // Basculer l'état du bouton (Hamburger <-> Croix)
+            menuBtn.classList.toggle('active');
+
+            // Basculer l'état du menu (Ouvert <-> Fermé)
+            mobileMenu.classList.toggle('open');
+
+            // Empêcher le scroll du body quand le menu est ouvert
+            if (mobileMenu.classList.contains('open')) {
+                document.body.style.overflow = 'hidden';
+            } else {
+                document.body.style.overflow = 'auto';
+            }
+        });
+
+        // Fermer le menu si on clique sur un lien
+        mobileLinks.forEach(link => {
+            link.addEventListener('click', () => {
+                menuBtn.classList.remove('active');
+                mobileMenu.classList.remove('open');
+                document.body.style.overflow = 'auto';
+            });
+        });
     </script>
 
 </body>
