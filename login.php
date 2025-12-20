@@ -15,7 +15,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
             header("Location: cards.php");
         }
         else {
-            echo "non valider";  
+            echo "non valider";
         }
     }
 }

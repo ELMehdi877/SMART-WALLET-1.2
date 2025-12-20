@@ -102,6 +102,87 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             overflow-x: hidden;
         }
 
+        /* --- ANIMATIONS KEYFRAMES --- */
+
+        /* 1. Flottement majestueux */
+        @keyframes float-slow {
+
+            0%,
+            100% {
+                transform: translateY(0) rotate(0deg);
+            }
+
+            50% {
+                transform: translateY(-15px) rotate(1deg);
+            }
+        }
+
+        /* 2. Éclat doré (Shine sur le texte) */
+        @keyframes gold-shine {
+            0% {
+                background-position: 200% center;
+            }
+
+            100% {
+                background-position: -200% center;
+            }
+        }
+
+        /* 3. Apparition progressive */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* --- CLASSES UTILITAIRES --- */
+        .animate-float {
+            animation: float-slow 8s ease-in-out infinite;
+        }
+
+        .animate-slide-up {
+            animation: slideUpFade 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+            opacity: 0;
+        }
+
+        .delay-1 {
+            animation-delay: 0.1s;
+        }
+
+        .delay-2 {
+            animation-delay: 0.2s;
+        }
+
+        .delay-3 {
+            animation-delay: 0.3s;
+        }
+
+        /* Texte doré premium */
+        .text-gradient-gold {
+            background: linear-gradient(to right, #FACC15, #EAB308, #FFF7ED, #EAB308);
+            background-size: 200% auto;
+            color: transparent;
+            -webkit-background-clip: text;
+            background-clip: text;
+            animation: gold-shine 5s linear infinite;
+        }
+
+        /* Texte doré premium */
+        .bg_gradient_gold {
+            background: linear-gradient(to right, #FACC15, #f1d582, #d0882f, #EAB308);
+            background-size: 200% auto;
+            /* color: transparent; */
+            /* -webkit-background-clip: initial; */
+            /* background-clip: text; */
+            animation: gold-shine 5s linear infinite;
+        }
+
         /* Glassmorphism Classes */
         .glass-panel {
             background: rgba(25, 25, 25, 0.4);
@@ -111,6 +192,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
             box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
             transition: all 0.3s ease;
         }
+
+        .glass-panel:hover {
+            border-color: rgba(234, 179, 8, 0.3);
+            background: rgba(15, 23, 42, 0.8);
+        }
+
 
         /* --- CREDIT CARD 3D STYLES --- */
         .credit-card {
@@ -266,14 +353,50 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 <body class="selection:bg-gold-500 selection:text-black font-sans">
 
     <!-- NAVBAR SIMPLIFIÉE (Réutilisation) -->
-    <nav class="fixed w-full z-50 px-4 py-4">
+    <nav class="fixed w-full z-50 px-4 py-4 ">
         <div class="glass-panel max-w-7xl mx-auto rounded-2xl px-6 py-3 flex justify-between items-center">
-            <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-full bg-gradient-to-br from-gold-400 to-amber-600 flex items-center justify-center">
-                    <img src="image/download.png" class="w-full h-full object-cover rounded-full opacity-90">
-                </div>
-                <span class="font-bold text-xl tracking-tight hidden sm:block">Smart<span class="text-gold-400">Wallet</span></span>
-            </div>
+            <!-- LOGO SMART WALLET PREMIUM -->
+                <a href="#" class="flex items-center gap-3 group">
+
+                    <!-- Conteneur de l'icône -->
+                    <div class="relative w-12 h-12 flex items-center justify-center">
+
+                        <!-- 1. Lueur d'arrière-plan (Glow Effect) -->
+                        <div
+                            class="absolute inset-0 bg-gold-500/30 rounded-full blur-lg group-hover:bg-gold-500/50 transition duration-500">
+                        </div>
+
+                        <!-- 2. Le Cercle de fond (Orange/Or comme l'original mais dégradé) -->
+                        <div
+                            class="absolute  inset-0 bg_gradient_gold rounded-xl rotate-3 group-hover:rotate-6 transition duration-300 shadow-lg">
+                        </div>
+
+                        <!-- 3. L'icône Portefeuille (SVG Custom) -->
+                        <div
+                            class="relative z-10 text-red-800 transform -rotate-3 group-hover:rotate-0 transition duration-300">
+                            <!-- Icone SVG Portefeuille minimaliste -->
+                            <svg width="28" height="28" viewBox="0 0 24 24" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M21 7V5.8C21 4.11984 21 3.27976 20.673 2.63803C20.3854 2.07354 19.9265 1.6146 19.362 1.32698C18.7202 1 17.8802 1 16.2 1H7.8C6.11984 1 5.27976 1 4.63803 1.32698C4.07354 1.6146 3.6146 2.07354 3.32698 2.63803C3 3.27976 3 4.11984 3 5.8V17M21 11V18.2C21 19.8802 21 20.7202 20.673 21.362C20.3854 21.9265 19.9265 22.3854 19.362 22.673C18.7202 23 17.8802 23 16.2 23H7.8C6.11984 23 5.27976 23 4.63803 22.673C4.07354 22.3854 3.6146 21.9265 3.32698 21.362C3 20.7202 3 19.8802 3 18.2V9.8C3 8.11984 3 7.27976 3.32698 6.63803C3.6146 6.07354 4.07354 5.6146 4.63803 5.32698C5.27976 5 6.11984 5 7.8 5H16.2C17.8802 5 18.7202 5 19.362 5.32698C19.9265 5.6146 20.3854 6.07354 20.673 6.63803C20.8993 7.08229 20.9755 7.70054 20.9946 8.80005"
+                                    stroke="#020617" stroke-width="2.5" stroke-linecap="round"
+                                    stroke-linejoin="round" />
+                                <circle cx="16.5" cy="14.5" r="1.5" fill="#020617" />
+                            </svg>
+                        </div>
+                    </div>
+
+                    <!-- Texte du Logo -->
+                    <div class="flex flex-col">
+                        <span class="font-heading font-extrabold text-2xl tracking-tight text-white leading-none">
+                            Smart<span
+                                class="text-gradient-gold">Wallet</span>
+                        </span>
+                        <span
+                            class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-medium group-hover:text-gold-400 transition">Finance
+                            App</span>
+                    </div>
+                </a>
             <!-- Menu Links -->
             <div class="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5">
                 <a href="index.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Dashboard</a>
@@ -671,3 +794,4 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
 
 </body>
 </html>
+
