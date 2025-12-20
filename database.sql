@@ -76,7 +76,7 @@ CREATE TABLE if not exists incomes (
     CONSTRAINT fk_incomes_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
     amount DECIMAL(10, 2) not null check (amount > 0),
     description VARCHAR(35) not null,
-    income_date DATE DEFAULT(CURRENT_DATE),
+    income_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
@@ -92,6 +92,7 @@ CREATE TABLE if not exists category (
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
+
 #creation de tableau expenses
 DROP TABLE IF EXISTS expenses;
 CREATE TABLE if not exists expenses (
@@ -102,11 +103,18 @@ CREATE TABLE if not exists expenses (
     CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
     amount DECIMAL(10, 2) not null check (amount > 0),
     description VARCHAR(35) not null,
-    expense_date DATE DEFAULT(CURRENT_DATE),
+    expense_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
-
+-
+insert into
+    category_limits (
+        user_id,
+        category,
+        limit_amount
+    )
+values (1, "mehdi", 45);
 
 insert into
     users (

@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infinity Control - Smart Wallet</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Rajdhani:wght@500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], tech: ['Rajdhani', 'sans-serif'] },
+                    colors: {
+                        void: '#050508',
+                        panel: '#0f0f13',
+                        gold: { 400: '#FACC15', 500: '#EAB308' },
+                        neon: { blue: '#06b6d4', red: '#f43f5e' }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 10s linear infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                        'modal-pop': 'modalPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards',
+                        'pulse-border': 'pulseBorder 2s infinite',
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(30px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        },
+                        modalPop: {
+                            '0%': { opacity: 0, transform: 'scale(0.9) translateY(20px)' },
+                            '100%': { opacity: 1, transform: 'scale(1) translateY(0)' },
+                        },
+                        pulseBorder: {
+                            '0%, 100%': { borderColor: 'rgba(250, 204, 21, 0.2)' },
+                            '50%': { borderColor: 'rgba(250, 204, 21, 0.8)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050508;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+            background-size: 50px 50px;
+            color: white;
+            overflow: hidden;
+        }
+
+        /* --- HOLOGRAPHIC PANEL --- */
+        .holo-panel {
+            background: rgba(18, 18, 24, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 40px -10px rgba(0, 0, 0, 0.7);
+            position: relative;
+        }
+        
+        /* Cyberpunk Corners */
+        .holo-panel::before, .holo-panel::after {
+            content: ''; position: absolute; width: 15px; height: 15px;
+            border: 2px solid transparent; transition: all 0.3s;
+        }
+        .holo-panel::before { top: -1px; left: -1px; border-top-color: rgba(250, 204, 21, 0.6); border-left-color: rgba(250, 204, 21, 0.6); }
+        .holo-panel::after { bottom: -1px; right: -1px; border-bottom-color: rgba(250, 204, 21, 0.6); border-right-color: rgba(250, 204, 21, 0.6); }
+
+        /* --- CIRCULAR PROGRESS --- */
+        .progress-ring {
+            width: 90px; height: 90px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+            background: rgba(255,255,255,0.02);
+        }
+        .progress-ring::after {
+            content: ''; position: absolute; inset: 0; border-radius: 50%; padding: 5px;
+            background: conic-gradient(var(--color) var(--percent), transparent 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor; mask-composite: exclude;
+        }
+
+        /* --- MINI CARDS (SELECTION) --- */
+        .mini-card {
+            height: 45px; border-radius: 8px;
+            border: 1px solid rgba(255,255,255,0.1);
+            cursor: pointer; transition: all 0.3s;
+            opacity: 0.4; transform: scale(0.95);
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Rajdhani', sans-serif; font-weight: bold; font-size: 10px; letter-spacing: 1px;
+        }
+        .mini-card:hover { opacity: 0.8; transform: scale(1); }
+        
+        .mini-card.active {
+            opacity: 1; transform: scale(1.05);
+            border-color: #FACC15;
+            box-shadow: 0 0 20px rgba(250, 204, 21, 0.3);
+            z-index: 10;
+        }
+        
+        .card-cih { background: linear-gradient(135deg, #ea580c, #c2410c); }
+        .card-bp { background: linear-gradient(135deg, #a16207, #713f12); }
+        .card-awb { background: linear-gradient(135deg, #eab308, #ca8a04); }
+
+        /* --- CUSTOM RANGE SLIDER --- */
+        input[type=range] { -webkit-appearance: none; width: 100%; background: transparent; }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none; height: 20px; width: 20px; border-radius: 50%;
+            background: #FACC15; cursor: pointer; margin-top: -8px;
+            box-shadow: 0 0 10px #FACC15;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px; background: rgba(255,255,255,0.1); border-radius: 2px;
+        }
+
+        /* Category Selector Grid */
+        .cat-option {
+            background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 12px; cursor: pointer; transition: all 0.2s;
+        }
+        .cat-option:hover { background: rgba(255,255,255,0.08); }
+        .cat-option.selected {
+            background: rgba(250, 204, 21, 0.1); border-color: #FACC15; color: #FACC15;
+            box-shadow: inset 0 0 15px rgba(250, 204, 21, 0.1);
+        }
+    </style>
+</head>
+<body class="flex">
+
+    <!-- SIDEBAR -->
+    <aside class="w-24 bg-panel border-r border-white/5 flex flex-col items-center py-10 z-40 hidden md:flex">
+        <div class="text-gold-400 text-3xl font-bold mb-16 drop-shadow-[0_0_10px_rgba(250,204,21,0.5)]">
+            <i class="fa-solid fa-cube"></i>
+        </div>
+        <div class="space-y-10 text-slate-600 text-xl flex flex-col items-center w-full">
+            <div class="w-full flex justify-center border-l-2 border-transparent hover:text-white hover:border-white transition-all py-2 cursor-pointer"><i class="fa-solid fa-house"></i></div>
+            <div class="w-full flex justify-center border-l-2 border-transparent hover:text-white hover:border-white transition-all py-2 cursor-pointer"><i class="fa-solid fa-credit-card"></i></div>
+            <div class="w-full flex justify-center border-l-2 border-gold-400 text-gold-400 py-2 cursor-pointer relative">
+                <i class="fa-solid fa-chart-pie"></i>
+                <div class="absolute inset-0 bg-gold-400/10 blur-lg"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="flex-1 h-screen overflow-y-auto p-6 lg:p-10 relative">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-end mb-12 animate-slide-up">
+            <div>
+                <h1 class="text-4xl lg:text-5xl font-bold font-tech uppercase tracking-widest text-white">
+                    Flux <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Monétaire</span>
+                </h1>
+                <p class="text-slate-500 font-mono text-sm mt-2 border-l-2 border-gold-400 pl-3">
+                    Système de contrôle budgétaire actif • v2.4
+                </p>
+            </div>
+            
+            <button onclick="openModal()" class="group flex items-center gap-3 bg-white/5 hover:bg-gold-500 hover:text-black border border-white/10 px-6 py-3 rounded-none skew-x-[-10deg] transition duration-300">
+                <div class="skew-x-[10deg] flex items-center gap-2 font-bold font-tech uppercase tracking-widest">
+                    <i class="fa-solid fa-plus-square"></i> Nouveau Plafond
+                </div>
+            </button>
+        </header>
+
+        <!-- 1. CIRCULAR BUDGETS -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+            
+            <!-- Gauge 1 -->
+            <div class="holo-panel p-6 rounded-xl flex flex-col items-center justify-center animate-slide-up" style="animation-delay: 0.1s">
+                <div class="progress-ring mb-4" style="--percent: 45%; --color: #10b981;">
+                    <i class="fa-solid fa-utensils text-2xl text-emerald-400"></i>
+                </div>
+                <h3 class="font-bold text-lg tracking-wide">Nourriture</h3>
+                <p class="text-slate-500 font-mono text-xs">675 / 1500 DH</p>
+            </div>
+
+            <!-- Gauge 2 -->
+            <div class="holo-panel p-6 rounded-xl flex flex-col items-center justify-center animate-slide-up" style="animation-delay: 0.2s">
+                <div class="progress-ring mb-4" style="--percent: 85%; --color: #facc15;">
+                    <i class="fa-solid fa-car text-2xl text-gold-400"></i>
+                </div>
+                <h3 class="font-bold text-lg tracking-wide">Transport</h3>
+                <p class="text-slate-500 font-mono text-xs">680 / 800 DH</p>
+            </div>
+
+            <!-- Gauge 3 (Blocked) -->
+            <div class="holo-panel p-6 rounded-xl flex flex-col items-center justify-center border-red-500/40 relative animate-slide-up" style="animation-delay: 0.3s">
+                <div class="absolute top-2 right-2 text-red-500 animate-pulse"><i class="fa-solid fa-lock"></i></div>
+                <div class="progress-ring mb-4" style="--percent: 100%; --color: #f43f5e;">
+                    <i class="fa-solid fa-bag-shopping text-2xl text-red-500"></i>
+                </div>
+                <h3 class="font-bold text-lg tracking-wide text-red-400">Shopping</h3>
+                <p class="text-slate-500 font-mono text-xs">2100 / 2000 DH</p>
+            </div>
+
+            <!-- Add placeholder -->
+            <div onclick="openModal()" class="border border-dashed border-white/10 rounded-xl flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 hover:border-gold-400/50 transition group animate-slide-up" style="animation-delay: 0.4s">
+                <div class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center text-slate-500 group-hover:text-gold-400 transition">
+                    <i class="fa-solid fa-plus text-xl"></i>
+                </div>
+            </div>
+
+        </section>
+
+        <!-- 2. RECURRING + CARD LINKING -->
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+            
+            <!-- FORMULAIRE (5 cols) -->
+            <div class="lg:col-span-5 holo-panel rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.5s">
+                <div class="flex items-center justify-between mb-8">
+                    <h2 class="text-xl font-bold font-tech uppercase tracking-wider text-white">
+                        <i class="fa-solid fa-robot text-gold-400 mr-2"></i> Auto-Transaction
+                    </h2>
+                    <div class="h-px bg-white/10 flex-1 ml-4"></div>
+                </div>
+
+                <form class="space-y-6">
+                    <!-- Nom -->
+                    <div>
+                        <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2 block">Désignation</label>
+                        <input type="text" placeholder="Ex: Netflix, Loyer..." class="w-full bg-void border border-white/10 rounded-lg p-3 text-white outline-none focus:border-gold-400 transition font-mono text-sm">
+                    </div>
+
+                    <!-- Montant & Catégorie -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2 block">Montant</label>
+                            <div class="relative">
+                                <input type="number" placeholder="0.00" class="w-full bg-void border border-white/10 rounded-lg p-3 text-white outline-none focus:border-gold-400 transition font-mono text-lg font-bold">
+                                <span class="absolute right-3 top-4 text-[10px] text-slate-500">DH</span>
+                            </div>
+                        </div>
+                        <div>
+                            <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-2 block">Type</label>
+                            <select class="w-full bg-void border border-white/10 rounded-lg p-3.5 text-slate-300 outline-none focus:border-gold-400 transition text-sm">
+                                <option>Dépense</option>
+                                <option>Revenu</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- CARD LINKING VISUAL -->
+                    <div class="bg-white/5 rounded-xl p-4 border border-white/5">
+                        <label class="text-[10px] text-gold-400 uppercase tracking-widest font-bold mb-3 block flex justify-between">
+                            <span>Lier à la carte</span>
+                            <span id="selectedCardName" class="text-white">Aucune</span>
+                        </label>
+                        
+                        <div class="grid grid-cols-3 gap-3">
+                            <div class="mini-card card-cih" onclick="selectCard(this, 'CIH Bank')">CIH</div>
+                            <div class="mini-card card-bp" onclick="selectCard(this, 'B. Populaire')">BP</div>
+                            <div class="mini-card card-awb" onclick="selectCard(this, 'Attijari')">AWB</div>
+                        </div>
+                    </div>
+
+                    <button class="w-full py-4 bg-gold-500 text-black font-bold font-tech uppercase tracking-[0.2em] hover:bg-white hover:text-black transition shadow-[0_0_20px_rgba(250,204,21,0.3)] clip-path-polygon">
+                        Programmer
+                    </button>
+                </form>
+            </div>
+
+            <!-- TABLEAU (7 cols) -->
+            <div class="lg:col-span-7 holo-panel rounded-2xl p-8 animate-slide-up" style="animation-delay: 0.6s">
+                <h2 class="text-xl font-bold font-tech uppercase tracking-wider text-white mb-6">
+                    Historique & Prévisions
+                </h2>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left border-collapse">
+                        <thead class="text-[10px] text-slate-500 uppercase tracking-widest border-b border-white/10">
+                            <tr>
+                                <th class="pb-3 pl-2">Nom</th>
+                                <th class="pb-3">Source</th>
+                                <th class="pb-3">Montant</th>
+                                <th class="pb-3 text-right pr-2">Status</th>
+                            </tr>
+                        </thead>
+                        <tbody class="text-sm font-mono text-slate-300 divide-y divide-white/5">
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 pl-2">Loyer Appt.</td>
+                                <td class="py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-orange-500"></div> CIH</td>
+                                <td class="py-4 text-white">4,500 DH</td>
+                                <td class="py-4 text-right pr-2"><span class="text-emerald-400">ACTIF</span></td>
+                            </tr>
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 pl-2">Netflix</td>
+                                <td class="py-4 flex items-center gap-2"><div class="w-2 h-2 rounded-full bg-yellow-600"></div> AWB</td>
+                                <td class="py-4 text-white">65 DH</td>
+                                <td class="py-4 text-right pr-2"><span class="text-emerald-400">ACTIF</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ================= MODAL CONFIGURATION LIMITES ================= -->
+    <div id="modalOverlay" class="hidden fixed inset-0 z-[60] bg-black/80 backdrop-blur-md flex items-center justify-center transition-opacity duration-300">
+        
+        <div id="modalContent" class="holo-panel w-full max-w-md p-8 rounded-2xl relative transform scale-90 opacity-0 transition-all duration-300">
+            
+            <!-- Close Button -->
+            <button onclick="closeModal()" class="absolute top-4 right-4 text-slate-500 hover:text-red-500 transition">
+                <i class="fa-solid fa-xmark text-xl"></i>
+            </button>
+
+            <!-- Modal Header -->
+            <div class="text-center mb-8">
+                <div class="inline-block p-3 rounded-full border border-gold-500/30 bg-gold-500/10 mb-3">
+                    <i class="fa-solid fa-sliders text-2xl text-gold-400"></i>
+                </div>
+                <h2 class="text-2xl font-bold font-tech uppercase tracking-widest text-white">Définir Plafond</h2>
+            </div>
+
+            <!-- Modal Form -->
+            <form class="space-y-6">
+                
+                <!-- 1. Grid Selection Categories -->
+                <div>
+                    <label class="text-[10px] text-slate-400 uppercase tracking-widest font-bold mb-3 block">Catégorie</label>
+                    <div class="grid grid-cols-3 gap-3">
+                        <div class="cat-option p-3 flex flex-col items-center gap-2 selected" onclick="selectCategory(this)">
+                            <i class="fa-solid fa-utensils"></i>
+                            <span class="text-xs font-bold">Food</span>
+                        </div>
+                        <div class="cat-option p-3 flex flex-col items-center gap-2" onclick="selectCategory(this)">
+                            <i class="fa-solid fa-car"></i>
+                            <span class="text-xs font-bold">Auto</span>
+                        </div>
+                        <div class="cat-option p-3 flex flex-col items-center gap-2" onclick="selectCategory(this)">
+                            <i class="fa-solid fa-bag-shopping"></i>
+                            <span class="text-xs font-bold">Shop</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Slider Amount -->
+                <div class="bg-white/5 border border-white/10 rounded-xl p-5">
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="text-[10px] text-slate-400 uppercase font-bold">Limite Mensuelle</span>
+                        <div class="text-2xl font-mono font-bold text-white">
+                            <span id="rangeValue">1500</span> <span class="text-sm text-gold-400">DH</span>
+                        </div>
+                    </div>
+                    <input type="range" min="100" max="5000" step="50" value="1500" oninput="updateRange(this.value)">
+                </div>
+
+                <!-- 3. Warning Text -->
+                <div class="flex gap-3 items-start p-3 bg-red-500/10 border border-red-500/20 rounded-lg">
+                    <i class="fa-solid fa-shield-halved text-red-400 mt-0.5"></i>
+                    <p class="text-xs text-slate-300 leading-tight">Le système bloquera toute transaction dépassant ce montant.</p>
+                </div>
+
+                <!-- Submit -->
+                <button type="button" onclick="closeModal()" class="w-full py-3 bg-gold-500 hover:bg-gold-400 text-black font-bold font-tech uppercase tracking-widest rounded-lg shadow-[0_0_15px_rgba(250,204,21,0.3)] transition">
+                    Sauvegarder
+                </button>
+
+            </form>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT -->
+    <script>
+        // --- 1. CARD SELECTION LOGIC ---
+        function selectCard(el, name) {
+            // Reset all
+            document.querySelectorAll('.mini-card').forEach(c => c.classList.remove('active'));
+            // Activate clicked
+            el.classList.add('active');
+            // Update Text
+            document.getElementById('selectedCardName').innerText = name;
+            document.getElementById('selectedCardName').classList.add('text-gold-400');
+        }
+
+        // --- 2. MODAL LOGIC ---
+        const modalOverlay = document.getElementById('modalOverlay');
+        const modalContent = document.getElementById('modalContent');
+
+        function openModal() {
+            modalOverlay.classList.remove('hidden');
+            // Add animation class
+            modalContent.classList.add('animate-modal-pop');
+        }
+
+        function closeModal() {
+            modalOverlay.classList.add('hidden');
+            modalContent.classList.remove('animate-modal-pop');
+        }
+
+        // --- 3. CATEGORY SELECTION IN MODAL ---
+        function selectCategory(el) {
+            document.querySelectorAll('.cat-option').forEach(c => c.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        // --- 4. SLIDER UPDATE ---
+        function updateRange(val) {
+            document.getElementById('rangeValue').innerText = parseInt(val).toLocaleString();
+        }
+    </script>
+
+</body>
+</html>

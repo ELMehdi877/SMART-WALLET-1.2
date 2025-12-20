@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget & Cards Link - Smart Wallet</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: { sans: ['Outfit', 'sans-serif'], tech: ['Rajdhani', 'sans-serif'] },
+                    colors: {
+                        void: '#050508',
+                        panel: '#0f0f13',
+                        gold: { 400: '#FACC15', 500: '#EAB308' },
+                        neon: { blue: '#06b6d4', red: '#f43f5e' }
+                    },
+                    animation: {
+                        'spin-slow': 'spin 10s linear infinite',
+                        'pulse-glow': 'pulseGlow 2s infinite',
+                        'slide-up': 'slideUp 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                    },
+                    keyframes: {
+                        pulseGlow: {
+                            '0%, 100%': { boxShadow: '0 0 5px rgba(250, 204, 21, 0.2)' },
+                            '50%': { boxShadow: '0 0 20px rgba(250, 204, 21, 0.6)' },
+                        },
+                        slideUp: {
+                            '0%': { opacity: 0, transform: 'translateY(30px)' },
+                            '100%': { opacity: 1, transform: 'translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #050508;
+            background-image: 
+                linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+            color: white;
+        }
+
+        /* Holographic Panel */
+        .holo-panel {
+            background: rgba(15, 15, 20, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 0 30px -5px rgba(0, 0, 0, 0.5);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Corner Accents */
+        .holo-panel::before {
+            content: ''; position: absolute; top: 0; left: 0; width: 20px; height: 20px;
+            border-top: 2px solid rgba(250, 204, 21, 0.5); border-left: 2px solid rgba(250, 204, 21, 0.5);
+        }
+        .holo-panel::after {
+            content: ''; position: absolute; bottom: 0; right: 0; width: 20px; height: 20px;
+            border-bottom: 2px solid rgba(250, 204, 21, 0.5); border-right: 2px solid rgba(250, 204, 21, 0.5);
+        }
+
+        /* Circular Progress (Conic Gradient) */
+        .progress-ring {
+            width: 100px; height: 100px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            position: relative;
+        }
+        .progress-ring::before {
+            content: ''; position: absolute; inset: 0; border-radius: 50%; padding: 6px;
+            background: conic-gradient(var(--color) var(--percent), #1f2937 0);
+            -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+            -webkit-mask-composite: xor;
+            mask-composite: exclude;
+        }
+
+        /* Mini Cards Selection */
+        .mini-card {
+            width: 60px; height: 40px; border-radius: 6px;
+            transition: all 0.3s; cursor: pointer; opacity: 0.5;
+            border: 1px solid transparent;
+        }
+        .mini-card:hover { opacity: 0.8; transform: translateY(-2px); }
+        .mini-card.selected {
+            opacity: 1; transform: scale(1.1);
+            border-color: #FACC15;
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+        }
+        /* Styles banques */
+        .mini-cih { background: linear-gradient(135deg, #f97316, #c2410c); }
+        .mini-bp { background: linear-gradient(135deg, #a16207, #713f12); }
+        .mini-attijari { background: linear-gradient(135deg, #eab308, #ca8a04); }
+
+        /* Custom Scroll */
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+    </style>
+</head>
+<body class="h-screen flex flex-col md:flex-row overflow-hidden">
+
+    <!-- SIDEBAR -->
+    <aside class="w-20 bg-panel border-r border-white/5 flex flex-col items-center py-8 z-50">
+        <div class="text-gold-400 text-2xl font-bold mb-10"><i class="fa-solid fa-infinity"></i></div>
+        <div class="space-y-8 text-slate-500">
+            <i class="fa-solid fa-house hover:text-white cursor-pointer transition"></i>
+            <i class="fa-solid fa-credit-card hover:text-white cursor-pointer transition"></i>
+            <div class="relative">
+                <i class="fa-solid fa-chart-simple text-gold-400 cursor-pointer drop-shadow-[0_0_8px_rgba(250,204,21,0.6)]"></i>
+                <div class="absolute -right-3 top-0 w-1.5 h-1.5 bg-gold-400 rounded-full"></div>
+            </div>
+        </div>
+    </aside>
+
+    <!-- CONTENT -->
+    <main class="flex-1 overflow-y-auto p-8 relative">
+        
+        <!-- HEADER -->
+        <header class="flex justify-between items-center mb-10 animate-slide-up">
+            <div>
+                <h1 class="text-4xl font-bold font-tech uppercase tracking-wider">Flux <span class="text-gold-400">Financier</span></h1>
+                <p class="text-slate-500 text-sm">Gérez les plafonds et liez vos cartes aux dépenses récurrentes.</p>
+            </div>
+            <!-- Alert Toast (Simulation) -->
+            <div id="alertBox" class="hidden px-4 py-2 bg-red-500/10 border border-red-500 text-red-400 rounded text-sm font-bold animate-pulse">
+                <i class="fa-solid fa-lock mr-2"></i> Limite atteinte !
+            </div>
+        </header>
+
+        <!-- 1. SECTION BUDGETS (CIRCULAR GAUGES) -->
+        <section class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
+            
+            <!-- Gauge 1: Food -->
+            <div class="holo-panel rounded-2xl p-6 flex flex-col items-center animate-slide-up" style="animation-delay: 0.1s">
+                <div class="progress-ring mb-4" style="--percent: 45%; --color: #10b981;">
+                    <i class="fa-solid fa-burger text-2xl text-emerald-400"></i>
+                </div>
+                <h3 class="font-bold text-white tracking-wide">Nourriture</h3>
+                <p class="text-xs font-mono text-slate-400 mt-1">675 / 1500 DH</p>
+                <div class="w-full mt-4 flex justify-between items-center px-2">
+                    <span class="text-[10px] text-emerald-400 uppercase">Sûr</span>
+                    <i class="fa-solid fa-ellipsis text-slate-600 cursor-pointer hover:text-white"></i>
+                </div>
+            </div>
+
+            <!-- Gauge 2: Fuel -->
+            <div class="holo-panel rounded-2xl p-6 flex flex-col items-center animate-slide-up" style="animation-delay: 0.2s">
+                <div class="progress-ring mb-4" style="--percent: 85%; --color: #facc15;">
+                    <i class="fa-solid fa-gas-pump text-2xl text-gold-400"></i>
+                </div>
+                <h3 class="font-bold text-white tracking-wide">Carburant</h3>
+                <p class="text-xs font-mono text-slate-400 mt-1">680 / 800 DH</p>
+                <div class="w-full mt-4 flex justify-between items-center px-2">
+                    <span class="text-[10px] text-gold-400 uppercase animate-pulse">Attention</span>
+                    <i class="fa-solid fa-ellipsis text-slate-600 cursor-pointer hover:text-white"></i>
+                </div>
+            </div>
+
+            <!-- Gauge 3: Shopping (BLOCKED) -->
+            <div class="holo-panel rounded-2xl p-6 flex flex-col items-center border-red-500/50 animate-slide-up" style="animation-delay: 0.3s">
+                <div class="progress-ring mb-4 relative" style="--percent: 100%; --color: #f43f5e;">
+                    <i class="fa-solid fa-bag-shopping text-2xl text-red-500"></i>
+                    <div class="absolute inset-0 border-2 border-red-500 rounded-full animate-ping opacity-20"></div>
+                </div>
+                <h3 class="font-bold text-white tracking-wide">Shopping</h3>
+                <p class="text-xs font-mono text-red-400 mt-1">2100 / 2000 DH</p>
+                <div class="w-full mt-4 flex justify-between items-center px-2 bg-red-500/10 py-1 rounded">
+                    <span class="text-[10px] text-red-500 uppercase font-bold flex gap-1"><i class="fa-solid fa-lock"></i> Bloqué</span>
+                    <i class="fa-solid fa-gear text-slate-600 cursor-pointer hover:text-white"></i>
+                </div>
+            </div>
+
+            <!-- Add New -->
+            <div onclick="openModal()" class="border border-dashed border-white/10 rounded-2xl p-6 flex flex-col items-center justify-center cursor-pointer hover:bg-white/5 transition group animate-slide-up" style="animation-delay: 0.4s">
+                <div class="w-12 h-12 rounded-full bg-white/5 flex items-center justify-center text-slate-500 group-hover:text-gold-400 group-hover:scale-110 transition">
+                    <i class="fa-solid fa-plus text-xl"></i>
+                </div>
+                <p class="text-xs text-slate-500 mt-3 uppercase tracking-widest group-hover:text-white">Ajouter Limite</p>
+            </div>
+
+        </section>
+
+        <!-- 2. SPLIT SECTION: RECURRING + CARD LINKING -->
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- FORMULAIRE (ADD RECURRING + LINK CARD) -->
+            <div class="lg:col-span-1 holo-panel rounded-3xl p-8 h-fit animate-slide-up" style="animation-delay: 0.5s">
+                <h2 class="text-xl font-bold font-tech text-white mb-6 uppercase tracking-wider flex items-center gap-2">
+                    <i class="fa-solid fa-rotate text-gold-400"></i> Transaction Récurrente
+                </h2>
+
+                <form id="recurringForm" class="space-y-6" onsubmit="return validateForm(event)">
+                    
+                    <!-- Input Nom -->
+                    <div class="relative group">
+                        <input type="text" required class="w-full bg-void border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-gold-400 transition peer" placeholder=" ">
+                        <label class="absolute left-4 top-3 text-slate-500 text-sm transition-all peer-focus:-top-2.5 peer-focus:text-xs peer-focus:text-gold-400 peer-focus:bg-panel peer-focus:px-1 peer-placeholder-shown:top-3 pointer-events-none">Nom (ex: Netflix)</label>
+                    </div>
+
+                    <!-- Input Montant + Categorie -->
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="relative group">
+                            <input type="number" id="amount" required class="w-full bg-void border border-white/10 rounded-xl px-4 py-3 text-white outline-none focus:border-gold-400 transition" placeholder="Prix">
+                            <span class="absolute right-4 top-3 text-slate-500 text-xs">DH</span>
+                        </div>
+                        <select id="category" class="bg-void border border-white/10 rounded-xl px-4 py-3 text-slate-300 outline-none focus:border-gold-400">
+                            <option value="Loisirs">Loisirs</option>
+                            <option value="Loyer">Loyer</option>
+                            <option value="Transport">Transport</option>
+                            <option value="Shopping">Shopping</option>
+                        </select>
+                    </div>
+
+                    <!-- LIAISON CARTE (NOUVEAU DESIGN VISUEL) -->
+                    <div class="pt-4 border-t border-white/10">
+                        <label class="text-xs text-slate-400 uppercase tracking-widest mb-3 block">Débiter sur quelle carte ?</label>
+                        
+                        <div class="flex gap-4">
+                            <!-- Carte 1: CIH -->
+                            <div class="mini-card mini-cih selected" onclick="selectCard(this, 'CIH')">
+                                <div class="h-full flex items-center justify-center text-[8px] font-bold text-white/50">CIH</div>
+                            </div>
+                            <!-- Carte 2: BP -->
+                            <div class="mini-card mini-bp" onclick="selectCard(this, 'BP')">
+                                <div class="h-full flex items-center justify-center text-[8px] font-bold text-white/50">BP</div>
+                            </div>
+                            <!-- Carte 3: Attijari -->
+                            <div class="mini-card mini-attijari" onclick="selectCard(this, 'AWB')">
+                                <div class="h-full flex items-center justify-center text-[8px] font-bold text-white/50">AWB</div>
+                            </div>
+                        </div>
+                        <!-- Input caché pour stocker la sélection -->
+                        <input type="hidden" id="selectedCard" value="CIH">
+                        <p id="cardNameDisplay" class="text-xs text-gold-400 mt-2 font-mono text-right">Carte sélectionnée : CIH Bank</p>
+                    </div>
+
+                    <!-- Toggle Active -->
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm text-white">Activer le 1er du mois ?</span>
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" checked class="sr-only peer">
+                            <div class="w-9 h-5 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-emerald-500"></div>
+                        </label>
+                    </div>
+
+                    <button type="submit" class="w-full py-4 bg-gold-500 hover:bg-gold-400 text-black font-bold font-tech uppercase tracking-widest rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.4)] transition hover:scale-[1.02]">
+                        Programmer
+                    </button>
+                </form>
+            </div>
+
+            <!-- TABLEAU LISTE (Terminal Style) -->
+            <div class="lg:col-span-2 holo-panel rounded-3xl p-8 animate-slide-up" style="animation-delay: 0.6s">
+                <h2 class="text-xl font-bold font-tech text-white mb-6 uppercase tracking-wider">
+                    Opérations Automatisées
+                </h2>
+                
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-400">
+                        <thead class="text-xs uppercase border-b border-white/10 font-mono text-gold-400">
+                            <tr>
+                                <th class="pb-3 pl-2">Label</th>
+                                <th class="pb-3">Source (Carte)</th>
+                                <th class="pb-3">Montant</th>
+                                <th class="pb-3">Prochaine Échéance</th>
+                                <th class="pb-3 text-right">État</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 font-mono">
+                            <!-- Item 1 -->
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 pl-2 text-white">Loyer Appart</td>
+                                <td class="py-4 flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-orange-500"></div> CIH Bank
+                                </td>
+                                <td class="py-4 text-white">4,500 DH</td>
+                                <td class="py-4">01/03/2025</td>
+                                <td class="py-4 text-right"><span class="text-emerald-400 text-xs border border-emerald-500/30 px-2 py-1 rounded">ACTIF</span></td>
+                            </tr>
+                            <!-- Item 2 -->
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 pl-2 text-white">Spotify</td>
+                                <td class="py-4 flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-yellow-600"></div> AWB
+                                </td>
+                                <td class="py-4 text-white">65 DH</td>
+                                <td class="py-4">01/03/2025</td>
+                                <td class="py-4 text-right"><span class="text-emerald-400 text-xs border border-emerald-500/30 px-2 py-1 rounded">ACTIF</span></td>
+                            </tr>
+                            <!-- Item 3 -->
+                            <tr class="hover:bg-white/5 transition">
+                                <td class="py-4 pl-2 text-white">Salle de Sport</td>
+                                <td class="py-4 flex items-center gap-2">
+                                    <div class="w-2 h-2 rounded-full bg-amber-800"></div> BP
+                                </td>
+                                <td class="py-4 text-white">250 DH</td>
+                                <td class="py-4">01/03/2025</td>
+                                <td class="py-4 text-right"><span class="text-red-400 text-xs border border-red-500/30 px-2 py-1 rounded">PAUSE</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- JS Logic -->
+    <script>
+        // 1. Gestion de la sélection de carte (Visuelle)
+        function selectCard(element, cardName) {
+            // Retirer la classe 'selected' de toutes les cartes
+            document.querySelectorAll('.mini-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Ajouter à la carte cliquée
+            element.classList.add('selected');
+            
+            // Mettre à jour l'input caché et le texte
+            document.getElementById('selectedCard').value = cardName;
+            
+            // Mapping des noms complets pour l'affichage
+            const fullNames = {
+                'CIH': 'CIH Bank',
+                'BP': 'Banque Populaire',
+                'AWB': 'Attijariwafa Bank'
+            };
+            document.getElementById('cardNameDisplay').innerText = "Carte sélectionnée : " + fullNames[cardName];
+        }
+
+        // 2. Simulation Validation & Blocage
+        function validateForm(e) {
+            e.preventDefault();
+            const category = document.getElementById('category').value;
+            const amount = document.getElementById('amount').value;
+
+            // Simuler le blocage si Catégorie = Shopping
+            if (category === 'Shopping') {
+                const alertBox = document.getElementById('alertBox');
+                alertBox.classList.remove('hidden');
+                alertBox.innerHTML = `<i class="fa-solid fa-lock mr-2"></i> Erreur : Le budget ${category} est dépassé !`;
+                
+                // Secouer le formulaire
+                const form = document.getElementById('recurringForm');
+                form.classList.add('animate-pulse');
+                setTimeout(() => form.classList.remove('animate-pulse'), 500);
+                return false;
+            }
+
+            alert("Transaction récurrente ajoutée avec succès !");
+        }
+
+        function openModal() {
+            alert("Ouvrir la modale de création de limite (simulé)");
+        }
+    </script>
+</body>
+</html>

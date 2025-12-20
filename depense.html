@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Budget Control - Smart Wallet</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
+    
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Plus Jakarta Sans', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace'],
+                    },
+                    colors: {
+                        dark: { 900: '#020617', card: 'rgba(15, 23, 42, 0.6)' },
+                        gold: { 400: '#FACC15', 500: '#EAB308', glow: 'rgba(250, 204, 21, 0.3)' },
+                        danger: { 500: '#EF4444', glow: 'rgba(239, 68, 68, 0.4)' }
+                    },
+                    animation: {
+                        'entry': 'entry 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
+                        'pulse-slow': 'pulseSlow 3s infinite',
+                        'shake': 'shake 0.5s cubic-bezier(.36,.07,.19,.97) both',
+                        'load-bar': 'loadBar 1.5s ease-out forwards',
+                    },
+                    keyframes: {
+                        entry: {
+                            '0%': { opacity: '0', transform: 'translateY(20px)' },
+                            '100%': { opacity: '1', transform: 'translateY(0)' },
+                        },
+                        pulseSlow: {
+                            '0%, 100%': { boxShadow: '0 0 0 0 rgba(239, 68, 68, 0)' },
+                            '50%': { boxShadow: '0 0 20px 0 rgba(239, 68, 68, 0.3)' },
+                        },
+                        shake: {
+                            '10%, 90%': { transform: 'translate3d(-1px, 0, 0)' },
+                            '20%, 80%': { transform: 'translate3d(2px, 0, 0)' },
+                            '30%, 50%, 70%': { transform: 'translate3d(-4px, 0, 0)' },
+                            '40%, 60%': { transform: 'translate3d(4px, 0, 0)' }
+                        },
+                        loadBar: {
+                            '0%': { width: '0%' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            background-color: #020617;
+            background-image: radial-gradient(circle at 50% 0%, rgba(250, 204, 21, 0.05) 0%, transparent 50%);
+            color: white;
+        }
+
+        /* Glassmorphism */
+        .glass-panel {
+            background: rgba(20, 20, 30, 0.6);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.5);
+        }
+
+        /* Custom Range Slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 24px; width: 24px;
+            border-radius: 50%;
+            background: #FACC15;
+            cursor: pointer;
+            margin-top: -10px;
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.8);
+            transition: transform 0.2s;
+        }
+        input[type=range]::-webkit-slider-thumb:hover { transform: scale(1.2); }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%; height: 4px;
+            cursor: pointer;
+            background: rgba(255,255,255,0.1);
+            border-radius: 2px;
+        }
+
+        /* Status Badges */
+        .status-badge {
+            font-size: 10px; text-transform: uppercase; letter-spacing: 1px; font-weight: bold;
+            padding: 4px 10px; border-radius: 20px;
+            display: inline-flex; align-items: center; gap: 6px;
+        }
+        .status-safe { background: rgba(16, 185, 129, 0.1); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.2); }
+        .status-warning { background: rgba(234, 179, 8, 0.1); color: #FACC15; border: 1px solid rgba(234, 179, 8, 0.2); }
+        .status-blocked { 
+            background: rgba(239, 68, 68, 0.1); color: #EF4444; border: 1px solid rgba(239, 68, 68, 0.3);
+            animation: pulse-slow 2s infinite;
+        }
+    </style>
+</head>
+<body class="h-screen w-full flex overflow-hidden font-sans">
+
+    <!-- SIDEBAR (Placeholder pour le layout) -->
+    <aside class="hidden md:flex w-24 border-r border-white/5 bg-dark-900 flex-col items-center py-8">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-gold-400 to-amber-600 flex items-center justify-center mb-8 shadow-lg shadow-gold-500/20">
+            <i class="fa-solid fa-wallet text-black"></i>
+        </div>
+        <div class="space-y-6 text-slate-500">
+            <i class="fa-solid fa-chart-pie text-xl hover:text-white cursor-pointer transition"></i>
+            <i class="fa-solid fa-credit-card text-xl hover:text-white cursor-pointer transition"></i>
+            <i class="fa-solid fa-sliders text-xl text-gold-400 cursor-pointer"></i>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <main class="flex-1 overflow-y-auto p-8 relative">
+        
+        <!-- Header -->
+        <header class="flex justify-between items-end mb-12 animate-entry">
+            <div>
+                <h2 class="text-4xl font-bold text-white mb-2">Contrôle <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-300">Budgétaire</span></h2>
+                <p class="text-slate-400 text-sm">Définissez vos plafonds. Le système bloquera automatiquement les excès.</p>
+            </div>
+            <button onclick="openModal()" class="group flex items-center gap-3 bg-gold-500 hover:bg-gold-400 text-black px-6 py-3 rounded-xl font-bold transition shadow-[0_0_20px_rgba(250,204,21,0.2)] hover:shadow-[0_0_30px_rgba(250,204,21,0.4)]">
+                <i class="fa-solid fa-plus bg-black/10 p-1.5 rounded-full text-xs"></i>
+                Nouveau Plafond
+            </button>
+        </header>
+
+        <!-- GRID OF CARDS -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- CARD 1: SAFE (Nourriture) -->
+            <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group hover:border-emerald-500/30 transition duration-300 animate-entry" style="animation-delay: 0.1s">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20 text-emerald-400">
+                            <i class="fa-solid fa-burger text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-white">Nourriture</h3>
+                            <div class="status-badge status-safe">Actif</div>
+                        </div>
+                    </div>
+                    <button class="text-slate-500 hover:text-white"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+
+                <!-- Jauge -->
+                <div class="mb-2 flex justify-between text-xs font-mono text-slate-400">
+                    <span>Dépensé</span>
+                    <span class="text-white">850 / 1500 DH</span>
+                </div>
+                <div class="w-full h-3 bg-dark-900 rounded-full overflow-hidden border border-white/5">
+                    <div class="h-full bg-gradient-to-r from-emerald-600 to-emerald-400 rounded-full animate-load-bar" style="width: 56%"></div>
+                </div>
+                <div class="mt-4 text-right">
+                    <span class="text-xs text-emerald-400 font-bold">56% Utilisé</span>
+                </div>
+            </div>
+
+            <!-- CARD 2: WARNING (Transport) -->
+            <div class="glass-panel p-6 rounded-3xl relative overflow-hidden group hover:border-gold-500/30 transition duration-300 animate-entry" style="animation-delay: 0.2s">
+                <div class="flex justify-between items-start mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-gold-500/10 flex items-center justify-center border border-gold-500/20 text-gold-400">
+                            <i class="fa-solid fa-gas-pump text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-white">Carburant</h3>
+                            <div class="status-badge status-warning">Attention</div>
+                        </div>
+                    </div>
+                    <button class="text-slate-500 hover:text-white"><i class="fa-solid fa-ellipsis-vertical"></i></button>
+                </div>
+
+                <!-- Jauge -->
+                <div class="mb-2 flex justify-between text-xs font-mono text-slate-400">
+                    <span>Dépensé</span>
+                    <span class="text-white">720 / 800 DH</span>
+                </div>
+                <div class="w-full h-3 bg-dark-900 rounded-full overflow-hidden border border-white/5">
+                    <div class="h-full bg-gradient-to-r from-yellow-600 to-yellow-400 rounded-full animate-load-bar shadow-[0_0_15px_rgba(234,179,8,0.4)]" style="width: 90%"></div>
+                </div>
+                <div class="mt-4 text-right">
+                    <span class="text-xs text-gold-400 font-bold">90% Utilisé</span>
+                </div>
+            </div>
+
+            <!-- CARD 3: BLOCKED (Shopping) - Style différent -->
+            <div class="glass-panel p-6 rounded-3xl relative overflow-hidden border-red-500/30 animate-entry" style="animation-delay: 0.3s">
+                <!-- Overlay Pattern Glitch -->
+                <div class="absolute inset-0 bg-red-500/5 z-0 pointer-events-none"></div>
+                
+                <div class="flex justify-between items-start mb-6 relative z-10">
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-2xl bg-red-500/10 flex items-center justify-center border border-red-500/20 text-red-500 animate-pulse">
+                            <i class="fa-solid fa-lock text-xl"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-lg text-white">Shopping</h3>
+                            <div class="status-badge status-blocked">Bloqué</div>
+                        </div>
+                    </div>
+                    <div class="text-red-500"><i class="fa-solid fa-circle-exclamation"></i></div>
+                </div>
+
+                <!-- Jauge Saturée -->
+                <div class="mb-2 flex justify-between text-xs font-mono text-slate-400 relative z-10">
+                    <span>Dépensé</span>
+                    <span class="text-red-400 font-bold">2100 / 2000 DH</span>
+                </div>
+                <div class="w-full h-3 bg-dark-900 rounded-full overflow-hidden border border-red-500/30 relative z-10">
+                    <div class="h-full bg-gradient-to-r from-red-700 to-red-500 w-full animate-pulse"></div>
+                </div>
+                <div class="mt-4 flex justify-between items-center relative z-10">
+                    <span class="text-[10px] text-red-400/80 uppercase tracking-widest">Limite dépassée</span>
+                    <span class="text-xs text-red-500 font-bold">105%</span>
+                </div>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- MODAL SLIDER (Configuration Limite) -->
+    <div id="limitModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-black/90 backdrop-blur-sm transition-opacity duration-300">
+        <div class="glass-panel w-full max-w-lg rounded-3xl p-8 relative transform scale-95 transition-transform duration-300" id="modalContent">
+            
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-slate-500 hover:text-white text-xl">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+
+            <div class="text-center mb-8">
+                <div class="w-16 h-16 bg-gold-500/10 rounded-full flex items-center justify-center mx-auto mb-4 border border-gold-500/20">
+                    <i class="fa-solid fa-sliders text-2xl text-gold-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold text-white">Définir un Plafond</h3>
+                <p class="text-sm text-slate-400 mt-2">Choisissez une catégorie et ajustez la jauge.</p>
+            </div>
+
+            <form id="limitForm" class="space-y-8">
+                
+                <!-- Category Select (Custom) -->
+                <div class="grid grid-cols-3 gap-3">
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cat" value="food" class="peer sr-only" checked>
+                        <div class="flex flex-col items-center gap-2 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition">
+                            <i class="fa-solid fa-burger text-lg mb-1"></i>
+                            <span class="text-xs font-bold">Food</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cat" value="transport" class="peer sr-only">
+                        <div class="flex flex-col items-center gap-2 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition">
+                            <i class="fa-solid fa-gas-pump text-lg mb-1"></i>
+                            <span class="text-xs font-bold">Auto</span>
+                        </div>
+                    </label>
+                    <label class="cursor-pointer">
+                        <input type="radio" name="cat" value="fun" class="peer sr-only">
+                        <div class="flex flex-col items-center gap-2 p-3 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition">
+                            <i class="fa-solid fa-gamepad text-lg mb-1"></i>
+                            <span class="text-xs font-bold">Loisir</span>
+                        </div>
+                    </label>
+                </div>
+
+                <!-- Interactive Slider -->
+                <div class="bg-dark-900/50 rounded-2xl p-6 border border-white/5">
+                    <div class="flex justify-between items-end mb-4">
+                        <span class="text-xs text-slate-400 uppercase tracking-widest">Limite Mensuelle</span>
+                        <div class="text-3xl font-mono font-bold text-white">
+                            <span id="limitValue">1500</span> <span class="text-lg text-gold-400">DH</span>
+                        </div>
+                    </div>
+                    
+                    <input type="range" min="100" max="10000" step="50" value="1500" class="w-full" oninput="updateValue(this.value)">
+                    
+                    <div class="flex justify-between mt-2 text-[10px] text-slate-500 font-mono">
+                        <span>100 DH</span>
+                        <span>10,000 DH</span>
+                    </div>
+                </div>
+
+                <div class="flex items-center gap-3 p-3 rounded-lg bg-red-500/10 border border-red-500/20">
+                    <i class="fa-solid fa-lock text-red-400"></i>
+                    <p class="text-xs text-red-300 leading-tight">Le blocage automatique sera activé dès que ce montant sera atteint.</p>
+                </div>
+
+                <button type="button" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold uppercase tracking-widest hover:bg-gold-400 transition shadow-[0_0_20px_rgba(250,204,21,0.3)]">
+                    Confirmer la limite
+                </button>
+            </form>
+
+        </div>
+    </div>
+
+    <script>
+        // Modal Logic
+        const modal = document.getElementById('limitModal');
+        const content = document.getElementById('modalContent');
+
+        function openModal() {
+            modal.classList.remove('hidden');
+            setTimeout(() => {
+                content.classList.remove('scale-95');
+                content.classList.add('scale-100');
+            }, 10);
+        }
+
+        function closeModal() {
+            content.classList.remove('scale-100');
+            content.classList.add('scale-95');
+            setTimeout(() => {
+                modal.classList.add('hidden');
+            }, 200);
+        }
+
+        // Slider Logic
+        function updateValue(val) {
+            document.getElementById('limitValue').innerText = parseInt(val).toLocaleString();
+        }
+    </script>
+</body>
+</html>

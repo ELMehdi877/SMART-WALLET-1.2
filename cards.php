@@ -409,6 +409,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 <a href="#" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Mes Cartes</a>
                 <a href="#" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Revenus</a>
             </div>
+            <form action="logout.php" method="POST" class="hidden md:block">
+                <button type="submit" name="logout"
+                style="animation-delay: 0.3s; opacity: 1;" class=" mobile-link btn-hover-effect px-5 py-3 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
+                >
+                déconnexion
+             </button>
+            </form>
             <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
             </div>
@@ -445,7 +452,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
             
             <form action="logout.php" method="POST">
                 <button type="submit" name="logout"
-                style="animation-delay: 0.3s; opacity: 0;" class="btn-hover-effect btn-shine-anim mobile-link btn-hover-effect btn-shine-anim px-8 py-4 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
+                style="animation-delay: 0.3s; opacity: 0;" class="mobile-link btn-hover-effect px-8 py-4 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
                 >
                 déconnexion
              </button>
@@ -462,7 +469,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Portefeuille Digital</p>
                 <h1 class="text-4xl font-bold text-white">Gestion des <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Cartes</span></h1>
             </div>
-            <button onclick="openModal('addCardModal')" class="bg-gradient-to-r from-gold-400 to-gold-600 hover:to-gold-500 text-black font-bold px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] transition transform hover:-translate-y-1 flex items-center gap-2">
+            <button onclick="openModal('addCardModal')" class="btn-shine-anim bg-gradient-to-r from-gold-400 to-gold-600 hover:to-gold-500 text-black font-bold px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] transition transform hover:-translate-y-1 flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Nouvelle Carte
             </button>
         </header>
@@ -484,7 +491,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <div class="card-texture"></div>
                         
                         <!-- FRONT -->
-                        <div class="card-front p-6 flex flex-col justify-between">
+                        <div class="card-front btn-shine-anim p-6 flex flex-col justify-between">
                             <div class="flex justify-between items-start">
                                 <div class="chip"></div>
                                 <i class="fa-solid fa-wifi rotate-90 text-white/70 text-2xl"></i>
@@ -585,7 +592,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
-                        <input type="date" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="datetime-local" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div class="flex justify-center my-2">
                         <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
@@ -596,13 +603,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <div class="grid grid-cols-2 gap-3 mt-1">
                             <!-- Option Radio Stylisée -->
 
-                            <label class="cursor-pointer">
+                            <!-- <label class="cursor-pointer">
                                 <input type="radio" name="card_id" value="0" class="peer sr-only">
                                 <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
                                     <span class="w-3 h-3 rounded-full bg-orange-500"></span>
                                     <span class="text-xs font-bold">1er card</span>
                                 </div>
-                            </label>
+                            </label> -->
                             <?php
                             $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
                             $stmt->execute([$user_id]);
@@ -611,10 +618,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                             
                             foreach($cards as $card){
                             echo '<label class="cursor-pointer">
-                                    <input type="radio" name="card_id" value="'.$card['id'].'" class="peer sr-only">
+                                    <input type="radio" required name="card_id" value="'.$card['id'].'" class="peer sr-only">
                                     <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
                                         <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                        <span class="text-xs font-bold">'.$card['card_name'].'</span>
+                                        <span class="text-xs font-bold">'.$card['bank_name'].'</span>
                                     </div>
                                 </label>';
                                 }
@@ -654,32 +661,45 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     <table class="w-full text-left text-sm">
                         <thead class="text-xs text-slate-500 uppercase border-b border-white/10">
                             <tr>
-                                <th class="pb-3 pl-2">Source</th>
-                                <th class="pb-3">Vers Carte</th>
-                                <th class="pb-3">Montant</th>
-                                <th class="pb-3 text-right pr-2">Statut</th>
+                                <th class="pb-3 pl-2 font-bold text-white">Date</th>
+                                <th class="pb-3 font-bold text-white">Vers Carte</th>
+                                <th class="pb-3 font-bold text-white">Montant</th>
+                                <th class="pb-3 text-right font-bold text-white pr-2">Statut</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <!-- Ligne 1 -->
-                            <tr class="group hover:bg-white/5 transition">
-                                <td class="py-4 pl-2">
-                                    <div class="font-bold text-white">Salaire Janvier</div>
-                                    <div class="text-[10px] text-slate-400">25/01/2025</div>
-                                </td>
-                                <td class="py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-4 rounded bg-orange-500"></div>
-                                        <span class="text-slate-300">CIH Bank</span>
-                                    </div>
-                                </td>
-                                <td class="py-4 font-mono font-bold text-emerald-400">+ 15,000 DH</td>
-                                <td class="py-4 text-right pr-2">
-                                    <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                </td>
-                            </tr>
+                             <?php
+                             $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
+                             FROM incomes i 
+                             LEFT JOIN cards c ON i.card_id = c.id
+                             WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
+                             ");
+                             $stmt->execute([$user_id]);
+                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                             foreach($last_affect as $income){
+                                echo '
+                                    <tr class="group hover:bg-white/5 transition">
+                                        <td class="py-4 pl-2">
+                                            <div class="text-[10px] text-slate-300">'.$income["income_date"].'</div>
+                                        </td>
+                                        <td class="py-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-4 rounded bg-orange-500"></div>
+                                                <span class="text-slate-300">'.$income["bank_name"].'</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 font-mono font-bold text-emerald-400">+ '.$income["amount"].' DH</td>
+                                        <td class="py-4 text-right pr-2">
+                                            <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                        </td>
+                                    </tr>
+                                ';
+                             }
+                             ?>
+                            
                             <!-- Ligne 2 -->
-                            <tr class="group hover:bg-white/5 transition">
+                            <!-- <tr class="group hover:bg-white/5 transition">
                                 <td class="py-4 pl-2">
                                     <div class="font-bold text-white">Freelance Mission</div>
                                     <div class="text-[10px] text-slate-400">20/01/2025</div>
@@ -694,7 +714,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 <td class="py-4 text-right pr-2">
                                     <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
                                 </td>
-                            </tr>
+                            </tr> -->
                         </tbody>
                     </table>
                 </div>
