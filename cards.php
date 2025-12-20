@@ -3,14 +3,23 @@ session_start();
 $user_id = $_SESSION["user_existe"][0];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
+//add card
 if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
-    if (isset($_POST["bank_name"]) && isset($_POST["card_name"])) {
+    if (isset($_POST["bank_name"]) && isset($_POST["card_name"]) && isset($_POST["last_4"]) && isset($_POST["balance"])) {
         $bank_name = $_POST["bank_name"];
         $card_name = $_POST["card_name"];
+        $last_4 = $_POST["last_4"];
         $balance = $_POST["balance"];
-        $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,balance) VALUES (?,?,?,?)");
-        $stmt->execute([$user_id,$bank_name,$card_name,$balance]);
+        $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance) VALUES (?,?,?,?,?)");
+        $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance]);
     }
+}
+
+//delete card
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["delete_card_id"])) {
+    $delete_card_id = $_POST["delete_card_id"];
+    $stmt = $pdo->prepare("DELETE FROM cards WHeRE id = ?");
+    $stmt->execute([$delete_card_id]);
 }
 ?>
 <!DOCTYPE html>
@@ -297,11 +306,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
             </div>
 
             
-            <a href="sign_up.php"
-                style="animation-delay: 0.3s; opacity: 0;" class="btn-hover-effect btn-shine-anim mobile-link btn-hover-effect btn-shine-anim px-8 py-4 bg-gold-500 text-black font-bold rounded-full shadow-xl"
+            <form action="logout.php">
+                <button type="submit" name="logout"
+                style="animation-delay: 0.3s; opacity: 0;" class="btn-hover-effect btn-shine-anim mobile-link btn-hover-effect btn-shine-anim px-8 py-4 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
                 >
-                Ouvrir un compte
-            </a>
+                déconnexion
+             </button>
+            </form>
         </div>
     </div>
 
@@ -325,8 +336,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
             <!-- CARTE 1: CIH (Exemple) -->
              
             <?php
-            
-                echo '
+                $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
+                $stmt->execute([$user_id]);
+                $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+                foreach($cards as $card){
+                    echo '
                 <div class="group perspective animate-card-enter" style="animation-delay: 0.1s;">
                     <div class="credit-card card-cih" onclick="this.classList.toggle(\'flipped\')">
                         <div class="card-texture"></div>
@@ -341,20 +356,23 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
                             <div class="text-center">
                                 <div class="text-white/80 text-xs uppercase tracking-widest mb-1">Solde Actuel</div>
                                 <div class="text-3xl font-mono font-bold text-white drop-shadow-md">
-                                    12,450 <span class="text-sm">DH</span>
+                                    '.$card['balance'].' <span class="text-sm">DH</span>
                                 </div>
                             </div>
 
                             <div class="flex justify-between items-end">
                                 <div>
-                                    <div class="text-white/60 text-[10px] uppercase font-bold">Titulaire</div>
-                                    <div class="text-white font-mono tracking-wider text-sm">MEHDI EL MOURABIT</div>
+                                    <div class="text-white/60 text-[10px] uppercase font-bold">BANK</div>
+                                    <div class="text-white font-mono tracking-wider text-sm">'.$card["bank_name"].'</div>
+                                    <div class="text-white/60 text-[10px] uppercase font-bold">NOM</div>
+                                    <div class="text-white font-mono tracking-wider text-sm">'.$card["card_name"].'</div>
                                 </div>
+                                
                                 <i class="fa-brands fa-cc-visa text-4xl text-white"></i>
                             </div>
 
                             <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/40 font-mono text-sm tracking-[0.2em]">
-                                **** 4291
+                                **** '.$card['last_4'].'
                             </div>
                         </div>
 
@@ -373,16 +391,17 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
                     </div>
                     
                     <!-- Actions sous la carte -->
-                    <div class="flex justify-center gap-4 mt-4 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-2 group-hover:translate-y-0">
-                        <button class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
+                    <form action="cards.php" method="POST" class="flex justify-center gap-4 mt-4 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-2 group-hover:translate-y-0">
+                        <button name="datail_card" class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
                             <i class="fa-solid fa-eye"></i> Détails
                         </button>
-                        <button class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
+                        <button name="delete_card_id" value="'.$card['id'].'" class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
                             <i class="fa-solid fa-trash"></i> Suppr.
                         </button>
-                    </div>
+                    </form>
                 </div>
                 ';
+                }
             ?>
 
 
@@ -550,7 +569,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
                 <!-- Numéro Carte -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">4 Derniers chiffres</label>
-                    <input type="text" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    <input type="text" name="last_4" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                 </div>
 
                 <!-- Solde Initial -->
@@ -566,6 +585,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
             </form>
         </div>
     </div>
+
+    
 
     <script>
         tailwind.config = {

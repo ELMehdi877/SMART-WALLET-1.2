@@ -12,7 +12,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         if ($user_existe && password_verify($login_password,$user_existe['password'])) {
             $_SESSION['user_existe'] = [$user_existe['id']];
             // echo "valider";
-            header("Location: dashbord.php");
+            header("Location: cards.php");
         }
         else {
             echo "non valider";   

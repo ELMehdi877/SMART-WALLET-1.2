@@ -473,3 +473,60 @@
 
 </body>
 </html>
+
+
+<form action="cards.php" method="POST" class="space-y-5">
+
+    <!-- Banque -->
+    <div>
+        <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
+        <input type="text" required name="bank_name" placeholder="Ex: CIH / BMCE ..." class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+    </div>
+
+    <!-- Nom de la carte -->
+    <div>
+        <label class="text-xs text-slate-400 uppercase font-bold">Nom</label>
+        <input type="text" required name="card_name" placeholder="Nom de la carte" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+    </div>
+
+    <!-- 4 derniers chiffres -->
+    <div>
+        <label class="text-xs text-slate-400 uppercase font-bold">4 Derniers chiffres</label>
+        <input type="text" required maxlength="4" name="card_last4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+    </div>
+
+    <!-- Solde initial -->
+    <div>
+        <label class="text-xs text-slate-400 uppercase font-bold">Solde Initial</label>
+        <input type="number" name="balance" step="0.01" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
+    </div>
+
+    <!-- Couleur de la carte -->
+    <div>
+        <label class="text-xs text-slate-400 uppercase font-bold">Couleur de la carte</label>
+        <div class="flex gap-2 mt-1">
+            <!-- Input type color -->
+            <input type="color" name="card_color" value="#f59e0b" class="w-12 h-12 rounded-xl cursor-pointer border border-white/10">
+
+            <!-- Select avec couleurs prédéfinies -->
+            <select name="card_color_select" class="flex-1 bg-black/40 border border-white/10 rounded-xl p-3 text-white outline-none">
+                <option value="">-- Couleurs prédéfinies --</option>
+                <option value="#f59e0b">Orange</option>
+                <option value="#3b82f6">Bleu</option>
+                <option value="#ef4444">Rouge</option>
+                <option value="#10b981">Vert</option>
+                <option value="#8b5cf6">Violet</option>
+                <option value="#f43f5e">Rose</option>
+                <option value="#facc15">Jaune</option>
+                <option value="#000000">Noir</option>
+                <option value="#ffffff">Blanc</option>
+            </select>
+        </div>
+        <p class="text-xs text-slate-400 mt-1">Vous pouvez soit choisir une couleur via le sélecteur, soit utiliser le champ couleur.</p>
+    </div>
+
+    <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
+        Activer la carte
+    </button>
+
+</form>
