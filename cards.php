@@ -1,3 +1,18 @@
+<?php
+session_start();
+$user_id = $_SESSION["user_existe"][0];
+$pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
+
+if ($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["add_card"])) {
+    if (isset($_POST["bank_name"]) && isset($_POST["card_name"])) {
+        $bank_name = $_POST["bank_name"];
+        $card_name = $_POST["card_name"];
+        $balance = $_POST["balance"];
+        $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,balance) VALUES (?,?,?,?)");
+        $stmt->execute([$user_id,$bank_name,$card_name,$balance]);
+    }
+}
+?>
 <!DOCTYPE html>
 <html lang="fr" class="scroll-smooth">
 <head>
@@ -210,52 +225,67 @@
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             
             <!-- CARTE 1: CIH (Exemple) -->
-            <div class="group perspective animate-card-enter" style="animation-delay: 0.1s;">
-                <div class="credit-card card-cih" onclick="this.classList.toggle('flipped')">
-                    <div class="card-texture"></div>
-                    
-                    <!-- FRONT -->
-                    <div class="card-front p-6 flex flex-col justify-between">
-                        <div class="flex justify-between items-start">
-                            <div class="chip"></div>
-                            <i class="fa-solid fa-wifi rotate-90 text-white/70 text-2xl"></i>
-                        </div>
+             
+            <?php
+                echo '
+                <div class="group perspective animate-card-enter" style="animation-delay: 0.1s;">
+                    <div class="credit-card card-cih" onclick="this.classList.toggle(\'flipped\')">
+                        <div class="card-texture"></div>
                         
-                        <div class="text-center">
-                            <div class="text-white/80 text-xs uppercase tracking-widest mb-1">Solde Actuel</div>
-                            <div class="text-3xl font-mono font-bold text-white drop-shadow-md">12,450 <span class="text-sm">DH</span></div>
+                        <!-- FRONT -->
+                        <div class="card-front p-6 flex flex-col justify-between">
+                            <div class="flex justify-between items-start">
+                                <div class="chip"></div>
+                                <i class="fa-solid fa-wifi rotate-90 text-white/70 text-2xl"></i>
+                            </div>
+                            
+                            <div class="text-center">
+                                <div class="text-white/80 text-xs uppercase tracking-widest mb-1">Solde Actuel</div>
+                                <div class="text-3xl font-mono font-bold text-white drop-shadow-md">
+                                    12,450 <span class="text-sm">DH</span>
+                                </div>
+                            </div>
+
+                            <div class="flex justify-between items-end">
+                                <div>
+                                    <div class="text-white/60 text-[10px] uppercase font-bold">Titulaire</div>
+                                    <div class="text-white font-mono tracking-wider text-sm">MEHDI EL MOURABIT</div>
+                                </div>
+                                <i class="fa-brands fa-cc-visa text-4xl text-white"></i>
+                            </div>
+
+                            <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/40 font-mono text-sm tracking-[0.2em]">
+                                **** 4291
+                            </div>
                         </div>
 
-                        <div class="flex justify-between items-end">
-                            <div>
-                                <div class="text-white/60 text-[10px] uppercase font-bold">Titulaire</div>
-                                <div class="text-white font-mono tracking-wider text-sm">MEHDI EL MOURABIT</div>
+                        <!-- BACK -->
+                        <div class="card-back">
+                            <div class="magnetic-strip"></div>
+                            <div class="px-6">
+                                <div class="bg-white/20 h-8 w-full flex items-center justify-end px-2 text-black font-mono font-bold italic">
+                                    123
+                                </div>
+                                <div class="mt-4 text-[10px] text-slate-400 text-center">
+                                    CIH BANK - CODE 30
+                                </div>
                             </div>
-                            <i class="fa-brands fa-cc-visa text-4xl text-white"></i>
                         </div>
-                        <div class="absolute bottom-4 left-1/2 -translate-x-1/2 text-white/40 font-mono text-sm tracking-[0.2em]">**** 4291</div>
                     </div>
+                    
+                    <!-- Actions sous la carte -->
+                    <div class="flex justify-center gap-4 mt-4 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-2 group-hover:translate-y-0">
+                        <button class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-eye"></i> Détails
+                        </button>
+                        <button class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full">
+                            <i class="fa-solid fa-trash"></i> Suppr.
+                        </button>
+                    </div>
+                </div>
+                ';
+            ?>
 
-                    <!-- BACK -->
-                    <div class="card-back">
-                        <div class="magnetic-strip"></div>
-                        <div class="px-6">
-                            <div class="bg-white/20 h-8 w-full flex items-center justify-end px-2 text-black font-mono font-bold italic">
-                                123
-                            </div>
-                            <div class="mt-4 text-[10px] text-slate-400 text-center">
-                                CIH BANK - CODE 30
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                
-                <!-- Actions sous la carte -->
-                <div class="flex justify-center gap-4 mt-4 opacity-0 group-hover:opacity-100 transition duration-300 transform translate-y-2 group-hover:translate-y-0">
-                    <button class="text-xs text-slate-400 hover:text-white flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full"><i class="fa-solid fa-eye"></i> Détails</button>
-                    <button class="text-xs text-slate-400 hover:text-red-400 flex items-center gap-1 bg-white/5 px-3 py-1 rounded-full"><i class="fa-solid fa-trash"></i> Suppr.</button>
-                </div>
-            </div>
 
             <!-- CARTE 2: Banque Populaire -->
             <div class="group perspective animate-card-enter" style="animation-delay: 0.2s;">
@@ -291,6 +321,8 @@
                     </div>
                 </div>
             </div>
+
+            
 
             <!-- CARTE 3: Ajouter (Placeholder visuel) -->
             <div onclick="openModal('addCardModal')" class="border-2 border-dashed border-white/10 rounded-3xl flex flex-col items-center justify-center p-6 cursor-pointer hover:border-gold-500/50 hover:bg-gold-500/5 transition group h-full min-h-[220px]">
@@ -422,10 +454,10 @@
             
             <h3 class="text-2xl font-bold text-white mb-6">Ajouter une Carte</h3>
             
-            <form action="database.php" method="POST" class="space-y-5">
+            <form action="cards.php" method="POST" class="space-y-5">
                 
                 <!-- Choix de la banque (Style Visuel) -->
-                <div>
+                <!-- <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
                     <div class="grid grid-cols-3 gap-2 mt-2">
                         <label class="cursor-pointer">
@@ -441,18 +473,28 @@
                             <div class="h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-700 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">AWB</div>
                         </label>
                     </div>
+                </div> -->
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
+                    <input type="text" required name="bank_name" placeholder="Ex: CHI / BMCE .." class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                </div>
+
+                <!-- non de carte -->
+                <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold">Nom</label>
+                    <input type="text" required name="card_name" placeholder="Nom de la carte" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                 </div>
 
                 <!-- Numéro Carte -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">4 Derniers chiffres</label>
-                    <input type="text" maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    <input type="text" required maxlength="4" placeholder="Ex: 4291" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                 </div>
 
                 <!-- Solde Initial -->
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Solde Initial</label>
-                    <input type="number" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
+                    <input type="number" name="balance" step="0.01" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
                 </div>
 
                 <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
