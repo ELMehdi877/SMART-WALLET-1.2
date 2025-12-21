@@ -1,0 +1,222 @@
+
+
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historique Revenus - Smart Wallet Elite</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Space+Grotesk:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        /* --- COPIE EXACTE DE VOS STYLES --- */
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            background-image: radial-gradient(circle at 10% 10%, rgba(250, 204, 21, 0.05) 0%, transparent 40%), radial-gradient(circle at 90% 90%, rgba(59, 130, 246, 0.05) 0%, transparent 40%);
+            overflow-x: hidden;
+        }
+
+        @keyframes gold-shine { 0% { background-position: 200% center; } 100% { background-position: -200% center; } }
+        @keyframes slideUpFade { from { opacity: 0; transform: translateY(40px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes cardEnter { 0% { opacity: 0; transform: translateY(50px) scale(0.9); } 100% { opacity: 1; transform: translateY(0) scale(1); } }
+
+        .animate-card-enter { animation: cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .text-gradient-gold { background: linear-gradient(to right, #FACC15, #EAB308, #FFF7ED, #EAB308); background-size: 200% auto; color: transparent; -webkit-background-clip: text; background-clip: text; animation: gold-shine 5s linear infinite; }
+        .bg_gradient_gold { background: linear-gradient(to right, #FACC15, #f1d582, #d0882f, #EAB308); background-size: 200% auto; animation: gold-shine 5s linear infinite; }
+        .glass-panel { background: rgba(25, 25, 25, 0.4); backdrop-filter: blur(16px); -webkit-backdrop-filter: blur(16px); border: 1px solid rgba(255, 255, 255, 0.08); box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3); transition: all 0.3s ease; }
+        
+        .btn-shine-anim { position: relative; overflow: hidden; }
+        .btn-shine-anim::after { content: ''; position: absolute; top: 0; left: 0; width: 50%; height: 100%; background: linear-gradient(to right, transparent, rgba(255, 255, 255, 0.6), transparent); transform: skewX(-25deg) translateX(-200%); animation: shine-move 4s infinite ease-in-out; pointer-events: none; }
+        @keyframes shine-move { 0% { transform: skewX(-25deg) translateX(-200%); } 100% { transform: skewX(-25deg) translateX(200%); } }
+
+        /* --- STYLES MENU MOBILE --- */
+        .menu-toggle-btn { width: 40px; height: 40px; position: relative; z-index: 50; border: none; background: transparent; cursor: pointer; display: flex; justify-content: center; align-items: center; }
+        .hamburger-line { position: absolute; width: 24px; height: 2px; background-color: #FACC15; border-radius: 2px; transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .line-1 { transform: translateY(-8px); }
+        .line-2 { transform: translateY(0); width: 16px; margin-left: 8px; }
+        .line-3 { transform: translateY(8px); width: 10px; margin-left: 14px; }
+        .menu-toggle-btn.active .line-1 { transform: translateY(0) rotate(45deg); }
+        .menu-toggle-btn.active .line-2 { opacity: 0; }
+        .menu-toggle-btn.active .line-3 { transform: translateY(0) rotate(-45deg); width: 24px; margin-left: 0; }
+        
+        .mobile-menu-overlay { position: fixed; inset: 0; background-color: rgba(27, 26, 26, 0.95); backdrop-filter: blur(20px); z-index: 40; display: flex; flex-direction: column; justify-content: center; align-items: center; pointer-events: none; opacity: 0; transition: opacity 0.3s ease; }
+        .mobile-menu-overlay.open { pointer-events: auto; opacity: 1; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #FACC15; }
+    </style>
+</head>
+
+<body class="selection:bg-gold-500 selection:text-black font-sans">
+
+    <!-- NAVBAR (Identique à cards.php) -->
+    <nav class="fixed w-full z-50 px-4 py-4">
+        <div class="glass-panel max-w-7xl mx-auto rounded-2xl px-6 py-3 flex justify-between items-center">
+            <a href="index.php" class="flex items-center gap-3 group">
+                <div class="relative w-12 h-12 flex items-center justify-center">
+                    <div class="absolute inset-0 bg-gold-500/30 rounded-full blur-lg"></div>
+                    <div class="absolute inset-0 bg_gradient_gold rounded-xl rotate-3"></div>
+                    <div class="relative z-10 text-red-800 transform -rotate-3">
+                        <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M21 7V5.8C21 4.11984 21 3.27976 20.673 2.63803C20.3854 2.07354 19.9265 1.6146 19.362 1.32698C18.7202 1 17.8802 1 16.2 1H7.8C6.11984 1 5.27976 1 4.63803 1.32698C4.07354 1.6146 3.6146 2.07354 3.32698 2.63803C3 3.27976 3 4.11984 3 5.8V17M21 11V18.2C21 19.8802 21 20.7202 20.673 21.362C20.3854 21.9265 19.9265 22.3854 19.362 22.673C18.7202 23 17.8802 23 16.2 23H7.8C6.11984 23 5.27976 23 4.63803 22.673C4.07354 22.3854 3.6146 21.9265 3.32698 21.362C3 20.7202 3 19.8802 3 18.2V9.8C3 8.11984 3 7.27976 3.32698 6.63803C3.6146 6.07354 4.07354 5.6146 4.63803 5.32698C5.27976 5 6.11984 5 7.8 5H16.2C17.8802 5 18.7202 5 19.362 5.32698C19.9265 5.6146 20.3854 6.07354 20.673 6.63803C20.8993 7.08229 20.9755 7.70054 20.9946 8.80005" stroke="#020617" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" />
+                            <circle cx="16.5" cy="14.5" r="1.5" fill="#020617" />
+                        </svg>
+                    </div>
+                </div>
+                <div class="flex flex-col">
+                    <span class="font-heading font-extrabold text-2xl tracking-tight text-white leading-none">Smart<span class="text-gradient-gold">Wallet</span></span>
+                    <span class="text-[10px] text-slate-400 uppercase tracking-[0.2em] font-medium">Finance App</span>
+                </div>
+            </a>
+
+            <div class="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5">
+                <a href="index.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Dashboard</a>
+                <a href="cards.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Mes Cartes</a>
+                <a href="#" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Revenus</a>
+            </div>
+
+            <form action="logout.php" method="POST" class="hidden md:block">
+                <button type="submit" name="logout" class="px-5 py-3 bg-red-500/80 text-white font-bold rounded-full shadow-xl transition hover:scale-105">Déconnexion</button>
+            </form>
+
+            <button class="menu-toggle-btn md:hidden" id="menuToggle">
+                <span class="hamburger-line line-1"></span>
+                <span class="hamburger-line line-2"></span>
+                <span class="hamburger-line line-3"></span>
+            </button>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT -->
+    <main class="pt-28 pb-12 px-4 max-w-7xl mx-auto space-y-8">
+        
+        <!-- HEADER -->
+        <header class="flex flex-col md:flex-row justify-between items-end gap-4 animate-card-enter">
+            <div>
+                <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Historique des Flux</p>
+                <h1 class="text-4xl font-bold text-white">Mes <span class="text-gradient-gold">Revenus</span></h1>
+            </div>
+            <div class="flex gap-3">
+                <a href="cards.php" class="btn-shine-anim bg-white/5 border border-white/10 text-white font-bold px-6 py-3 rounded-xl transition hover:bg-white/10 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Ajouter un revenu
+                </a>
+            </div>
+        </header>
+
+        <!-- GRID 1:3 (Structure de colonnes respectée) -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            
+            <!-- COLONNE GAUCHE: RÉSUMÉ -->
+            <div class="lg:col-span-1 space-y-6">
+                <!-- Card Total -->
+                <div class="glass-panel rounded-3xl p-8 animate-card-enter" style="animation-delay: 0.1s">
+                    <div class="w-12 h-12 rounded-2xl bg-gold-500/20 text-gold-400 flex items-center justify-center mb-4">
+                        <i class="fa-solid fa-wallet text-xl"></i>
+                    </div>
+                    <p class="text-slate-400 text-sm font-medium uppercase tracking-wider">Total Encaissé</p>
+                    <h2 class="text-4xl font-mono font-bold text-white mt-2">
+                        <?php echo number_format($total_income, 2); ?> <span class="text-lg text-gold-500">DH</span>
+                    </h2>
+                    <div class="mt-6 pt-6 border-t border-white/5 flex items-center justify-between text-xs">
+                        <span class="text-slate-500 italic">Mise à jour en temps réel</span>
+                        <span class="text-emerald-400 font-bold"><i class="fa-solid fa-chart-line mr-1"></i> +12%</span>
+                    </div>
+                </div>
+
+                <!-- Filtres Rapides -->
+                <div class="glass-panel rounded-3xl p-6 animate-card-enter" style="animation-delay: 0.2s">
+                    <h3 class="text-white font-bold mb-4 flex items-center gap-2">
+                        <i class="fa-solid fa-filter text-gold-500 text-sm"></i> Filtrer la période
+                    </h3>
+                    <div class="space-y-3">
+                        <button class="w-full text-left px-4 py-3 rounded-xl bg-gold-500 text-black font-bold text-sm">Tous les revenus</button>
+                        <button class="w-full text-left px-4 py-3 rounded-xl bg-white/5 text-slate-400 font-medium text-sm hover:text-white transition">Ce mois-ci</button>
+                        <button class="w-full text-left px-4 py-3 rounded-xl bg-white/5 text-slate-400 font-medium text-sm hover:text-white transition">Mois dernier</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- COLONNE DROITE: HISTORIQUE COMPLET -->
+            <div class="lg:col-span-2 space-y-6">
+                <div class="glass-panel rounded-3xl p-6 animate-card-enter" style="animation-delay: 0.3s">
+                    <div class="flex justify-between items-center mb-8">
+                        <h3 class="text-xl font-bold text-white tracking-tight">Liste des Transactions</h3>
+                        <span class="bg-white/5 text-slate-400 text-[10px] px-3 py-1 rounded-full border border-white/10 uppercase font-bold tracking-widest">
+                            Entrées
+                        </span>
+                    </div>
+
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left">
+                            <thead class="text-[10px] text-slate-500 uppercase tracking-[0.2em] border-b border-white/5">
+                                <tr>
+                                    <th class="pb-4 font-bold">Détails / Date</th>
+                                    <th class="pb-4 font-bold">Compte de dépôt</th>
+                                    <th class="pb-4 font-bold text-right">Montant</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-white/5">
+                                    <tr>
+                                        <td colspan="3" class="py-20 text-center">
+                                            <div class="text-4xl mb-4 opacity-20">💰</div>
+                                            <p class="text-slate-500 font-medium">Aucun revenu trouvé dans votre historique.</p>
+                                        </td>
+                                    </tr>
+                                
+                                        <tr class="group hover:bg-white/[0.02] transition duration-300">
+                                            <td class="py-5">
+                                                <div class="flex items-center gap-4">
+                                                    <div class="w-10 h-10 rounded-full bg-emerald-500/10 text-emerald-500 flex items-center justify-center border border-emerald-500/20 group-hover:scale-110 transition">
+                                                        <i class="fa-solid fa-arrow-down-long"></i>
+                                                    </div>
+                                                    <div>
+                                                        <p class="text-white font-bold text-sm tracking-wide"></p>
+                                                        <p class="text-[10px] text-slate-500 mt-0.5">
+                                                   
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td class="py-5">
+                                                <div class="flex items-center gap-2">
+                                                    <span class="w-2 h-2 rounded-full bg-gold-500"></span>
+                                                    <span class="text-xs text-slate-300 font-medium">
+                                                        <span class="text-slate-600 ml-1">(**** </span>
+                                                    </span>
+                                                </div>
+                                            </td>
+                                            <td class="py-5 text-right">
+                                                <span class="text-lg font-mono font-bold text-emerald-400">+ <?php echo number_format($income['amount'], 2); ?></span>
+                                                <span class="text-[10px] text-emerald-400/50 font-bold ml-1">DH</span>
+                                            </td>
+                                        </tr>
+                                    
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- SCRIPT (Identique à cards.php pour le menu) -->
+    <script>
+        const menuBtn = document.getElementById('menuToggle');
+        const mobileMenu = document.getElementById('mobileMenu');
+        
+        menuBtn.addEventListener('click', () => {
+            menuBtn.classList.toggle('active');
+            mobileMenu.classList.toggle('open');
+            document.body.style.overflow = mobileMenu.classList.contains('open') ? 'hidden' : 'auto';
+        });
+    </script>
+
+</body>
+</html>

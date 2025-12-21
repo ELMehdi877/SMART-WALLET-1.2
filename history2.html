@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Premium Finance Tracker</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0f172a;
+            color: #f8fafc;
+        }
+
+        /* Animation Keyframes Custom */
+        @keyframes slideUpFade {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+                filter: blur(5px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+                filter: blur(0);
+            }
+        }
+
+        .animate-item {
+            animation: slideUpFade 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+            opacity: 0;
+        }
+
+        /* Effet de Glassmorphism */
+        .glass-card {
+            background: rgba(30, 41, 59, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .income-gradient {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+        }
+
+        .expense-gradient {
+            background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%);
+        }
+
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #334155; border-radius: 10px; }
+    </style>
+</head>
+<body class="p-4 md:p-8 flex justify-center items-center min-h-screen">
+
+    <div class="max-w-md w-full">
+        <!-- Header Balance -->
+        <div class="glass-card rounded-3xl p-6 mb-8 shadow-2xl overflow-hidden relative">
+            <div class="absolute -top-10 -right-10 w-32 h-32 bg-indigo-500/20 rounded-full blur-3xl"></div>
+            <p class="text-slate-400 text-sm font-medium">Solde Total</p>
+            <h1 id="total-balance" class="text-4xl font-bold mt-1 tracking-tight">2,450.00 €</h1>
+            
+            <div class="flex gap-4 mt-6">
+                <div class="flex-1">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Revenus</p>
+                    <p class="text-emerald-400 font-bold">+ 1,200 €</p>
+                </div>
+                <div class="w-px h-10 bg-slate-700"></div>
+                <div class="flex-1">
+                    <p class="text-xs text-slate-400 uppercase tracking-wider font-semibold">Dépenses</p>
+                    <p class="text-rose-400 font-bold">- 450 €</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filter Tabs -->
+        <div class="flex gap-2 mb-6 bg-slate-900/50 p-1 rounded-xl border border-slate-800">
+            <button onclick="filterItems('all')" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all bg-slate-800 text-white shadow-lg" id="btn-all">Tout</button>
+            <button onclick="filterItems('income')" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white" id="btn-income">Revenus</button>
+            <button onclick="filterItems('expense')" class="flex-1 py-2 rounded-lg text-sm font-medium transition-all text-slate-400 hover:text-white" id="btn-expense">Dépenses</button>
+        </div>
+
+        <!-- Transactions List -->
+        <div id="history-container" class="space-y-4">
+            <!-- Les items seront injectés ici via JS -->
+        </div>
+    </div>
+
+    <script>
+        // Données fictives
+        const data = [
+            { id: 1, type: 'income', title: 'Salaire Freelance', category: 'Design', amount: 1500, date: 'Aujourd\'hui', icon: 'fa-briefcase' },
+            { id: 2, type: 'expense', title: 'Abonnement Adobe', category: 'Logiciels', amount: 52.99, date: 'Hier', icon: 'fa-layer-group' },
+            { id: 3, type: 'expense', title: 'Starbucks Coffee', category: 'Alimentation', amount: 6.50, date: 'Hier', icon: 'fa-mug-hot' },
+            { id: 4, type: 'income', title: 'Vente Vinted', category: 'Mode', amount: 45.00, date: '20 Oct', icon: 'fa-shirt' },
+            { id: 5, type: 'expense', title: 'Loyer Appartement', category: 'Logement', amount: 850.00, date: '18 Oct', icon: 'fa-house' },
+        ];
+
+        const container = document.getElementById('history-container');
+
+        function renderHistory(filter = 'all') {
+            container.innerHTML = '';
+            
+            const filteredData = filter === 'all' ? data : data.filter(item => item.type === filter);
+
+            filteredData.forEach((item, index) => {
+                const isExpense = item.type === 'expense';
+                const div = document.createElement('div');
+                
+                // Animation Delay Staggering
+                div.style.animationDelay = `${index * 0.1}s`;
+                div.className = `animate-item glass-card rounded-2xl p-4 flex items-center justify-between transition-transform hover:scale-[1.02] cursor-pointer shadow-lg`;
+
+                div.innerHTML = `
+                    <div class="flex items-center gap-4">
+                        <div class="w-12 h-12 rounded-xl flex items-center justify-center text-lg ${isExpense ? 'bg-rose-500/10 text-rose-500' : 'bg-emerald-500/10 text-emerald-500'} border ${isExpense ? 'border-rose-500/20' : 'border-emerald-500/20'}">
+                            <i class="fas ${item.icon}"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-semibold text-slate-100">${item.title}</h3>
+                            <p class="text-xs text-slate-500 font-medium">${item.category} • ${item.date}</p>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <p class="font-bold ${isExpense ? 'text-rose-400' : 'text-emerald-400'}">
+                            ${isExpense ? '-' : '+'} ${item.amount.toLocaleString('fr-FR', { minimumFractionDigits: 2 })} €
+                        </p>
+                        <div class="w-16 h-1 bg-slate-700/30 rounded-full mt-2 overflow-hidden">
+                            <div class="h-full ${isExpense ? 'bg-rose-500' : 'bg-emerald-500'} opacity-30" style="width: 70%"></div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        function filterItems(type) {
+            // Update UI buttons
+            ['all', 'income', 'expense'].forEach(t => {
+                const btn = document.getElementById(`btn-${t}`);
+                if (t === type) {
+                    btn.classList.add('bg-slate-800', 'text-white', 'shadow-lg');
+                    btn.classList.remove('text-slate-400');
+                } else {
+                    btn.classList.remove('bg-slate-800', 'text-white', 'shadow-lg');
+                    btn.classList.add('text-slate-400');
+                }
+            });
+
+            // Re-render with animation
+            renderHistory(type);
+        }
+
+        // Initial render
+        window.onload = () => renderHistory();
+    </script>
+</body>
+</html>

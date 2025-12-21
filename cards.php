@@ -704,7 +704,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                             </td>
                                             <td class="py-4">
                                                 <div class="flex items-center gap-2">
-                                                    <div class="w-6 h-4 rounded bg-orange-500"></div>
+                                                    <div class="px-2 py-1 rounded bg-orange-500 text-white">CIH</div>
                                                     <span class="text-slate-300">'.$income["bank_name"].'</span>
                                                 </div>
                                             </td>
