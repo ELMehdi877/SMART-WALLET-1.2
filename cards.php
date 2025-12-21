@@ -722,6 +722,188 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
 
         </section>
 
+        <!-- 2️⃣ SECTION AFFECTATION DEPENSES -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-8 pt-8 border-t border-white/5">
+            
+            <!-- Formulaire d'affectation -->
+            <div class="lg:col-span-1 glass-panel rounded-3xl p-6 h-fit sticky top-28">
+                <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
+                    <span class="w-1 h-6 bg-gold-400 rounded-full"></span> Affecter un Depense
+                </h3>
+                <form action="depense.php" method="POST" class="space-y-4">
+                    
+                    <!-- <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold ml-1">Sélectionner un Revenu</label>
+                        <select name="income_category" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 transition">
+                            <option value="" disabled selected>Choisir une catégorie</option>
+                            <option value="ALL">ALL</option>
+                            <option value="Salaire">Salaire</option>
+                            <option value="Prime">Prime</option>
+                            <option value="Bonus">Bonus</option>
+                            <option value="Revenus freelancing">Revenus freelancing</option>
+                        </select>
+                        
+                    </div> -->
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
+                        <input type="text" required name="expense_categori" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
+                        <input type="number" required name="expense_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">description</label>
+                        <input type="text" required name="expense_description" placeholder="description" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
+                        <input type="datetime-local" name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div class="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/5">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-rotate"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">Récurrent</p>
+                                <p class="text-[10px] text-slate-400">Répéter chaque mois</p>
+                            </div>
+                        </div>
+                        <!-- Switch Component -->
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
+                        </label>
+                    </div>
+                    <div class="flex justify-center my-2">
+                        <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
+                    </div>
+
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold ml-1">Vers la Carte</label>
+                        <div class="grid grid-cols-2 gap-3 mt-1">
+                            <!-- Option Radio Stylisée -->
+
+                            <!-- <label class="cursor-pointer">
+                                <input type="radio" name="card_id" value="0" class="peer sr-only">
+                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                                    <span class="text-xs font-bold">1er card</span>
+                                </div>
+                            </label> -->
+                            <?php
+                            $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
+                            $stmt->execute([$user_id]);
+                            
+                            $cards = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                            
+                            foreach($cards as $card){
+                            echo '<label class="cursor-pointer">
+                                    <input type="radio" required name="card_id" value="'.$card['id'].'" class="peer sr-only">
+                                    <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                        <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                                        <span class="text-xs font-bold">'.$card['bank_name'].'</span>
+                                    </div>
+                                </label>';
+                                }
+                            
+                            ?>
+                            <!-- <label class="cursor-pointer">
+                                <input type="radio" name="card_target" value="cih" class="peer sr-only">
+                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
+                                    <span class="text-xs font-bold">CIH Bank</span>
+                                </div>
+                            </label>
+                            <label class="cursor-pointer">
+                                <input type="radio" name="card_target" value="bp" class="peer sr-only">
+                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
+                                    <span class="w-3 h-3 rounded-full bg-amber-700"></span>
+                                    <span class="text-xs font-bold">B. Populaire</span>
+                                </div>
+                            </label> -->
+                        </div>
+                    </div>
+
+                    <button type="submit" name="income_affect" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gold-400 transition shadow-lg">
+                        Valider l'affectation
+                    </button>
+                </form>
+            </div>
+
+            <!-- Historique des mouvements -->
+            <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
+                <div class="flex justify-between items-center mb-6">
+                    <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
+                    <button class="text-xs text-gold-400 hover:text-white">Voir tout</button>
+                </div>
+
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm">
+                        <thead class="text-xs text-slate-500 uppercase border-b border-white/10">
+                            <tr>
+                                <th class="pb-3 pl-2 font-bold text-white">Date</th>
+                                <th class="pb-3 font-bold text-white">Vers Carte</th>
+                                <th class="pb-3 font-bold text-white">Montant</th>
+                                <th class="pb-3 text-right font-bold text-white pr-2">Statut</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5">
+                            <!-- Ligne 1 -->
+                             <?php
+                             $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
+                             FROM incomes i 
+                             LEFT JOIN cards c ON i.card_id = c.id
+                             WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
+                             ");
+                             $stmt->execute([$user_id]);
+                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                             foreach($last_affect as $income){
+                                echo '
+                                    <tr class="group hover:bg-white/5 transition">
+                                        <td class="py-4 pl-2">
+                                            <div class="text-[10px] text-slate-300">'.$income["income_date"].'</div>
+                                        </td>
+                                        <td class="py-4">
+                                            <div class="flex items-center gap-2">
+                                                <div class="w-6 h-4 rounded bg-orange-500"></div>
+                                                <span class="text-slate-300">'.$income["bank_name"].'</span>
+                                            </div>
+                                        </td>
+                                        <td class="py-4 font-mono font-bold text-emerald-400">+ '.$income["amount"].' DH</td>
+                                        <td class="py-4 text-right pr-2">
+                                            <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                        </td>
+                                    </tr>
+                                ';
+                             }
+                             ?>
+                            
+                            <!-- Ligne 2 -->
+                            <!-- <tr class="group hover:bg-white/5 transition">
+                                <td class="py-4 pl-2">
+                                    <div class="font-bold text-white">Freelance Mission</div>
+                                    <div class="text-[10px] text-slate-400">20/01/2025</div>
+                                </td>
+                                <td class="py-4">
+                                    <div class="flex items-center gap-2">
+                                        <div class="w-6 h-4 rounded bg-amber-700"></div>
+                                        <span class="text-slate-300">B. Populaire</span>
+                                    </div>
+                                </td>
+                                <td class="py-4 font-mono font-bold text-emerald-400">+ 2,500 DH</td>
+                                <td class="py-4 text-right pr-2">
+                                    <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                </td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+        </section>
+
     </main>
 
     <!-- 3️⃣ MODAL: AJOUTER UNE CARTE -->
