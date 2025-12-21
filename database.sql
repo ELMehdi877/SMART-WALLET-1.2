@@ -81,16 +81,15 @@ CREATE TABLE if not exists incomes (
 );
 
 #creation de tableau category
--- DROP TABLE IF EXISTS category;
--- CREATE TABLE if not exists category (
---     id int PRIMARY key AUTO_INCREMENT,
---     user_id INT,
---     CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
---     name VARCHAR(35) not null,
---     description VARCHAR(35) not null,
---     monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
---     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
--- );
+DROP TABLE IF EXISTS category;
+CREATE TABLE if not exists category (
+    id int PRIMARY key AUTO_INCREMENT,
+    user_id INT,
+    CONSTRAINT fk_category_users FOREIGN KEY (user_id) REFERENCES users (id),
+    name VARCHAR(35) not null,
+    monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
+    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+);
 
 
 #creation de tableau expenses
@@ -101,12 +100,9 @@ CREATE TABLE if not exists expenses (
     CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
     card_id INT,
     CONSTRAINT fk_expenses_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
-    category VARCHAR(35) not null,
     amount DECIMAL(10, 2) not null check (amount > 0),
     description VARCHAR(35) not null,
-    monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
     expense_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
-    check_recurring BOOLEAN,
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 

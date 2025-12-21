@@ -760,27 +760,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
                         <input type="datetime-local" name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
-                    <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold">Limites mensuelles</label>
-                        <input type="number" name="expense_limite" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
-                    </div>
-                    <!-- RECURRENCE TOGGLE -->
-                    <div class="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/5">
-                        <div class="flex items-center gap-3">
-                            <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center text-sm">
-                                <i class="fa-solid fa-rotate"></i>
-                            </div>
-                            <div>
-                                <p class="text-sm font-bold text-white">Récurrent</p>
-                                <p class="text-[10px] text-slate-400">Répéter chaque mois</p>
-                            </div>
-                        </div>
-                        <!-- Switch Component -->
-                        <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="check_recurring" value= "1" class="sr-only peer">
-                            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
-                        </label>
-                    </div>
+                    
                     <div class="flex justify-center my-2">
                         <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
                     </div>
@@ -885,7 +865,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     </main>
 
     <!-- 3️⃣ MODAL: AJOUTER UNE CARTE -->
-    <div id="addCardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div id="addardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-panel w-full max-w-md rounded-2xl p-8 relative animate-card-enter">
             <button onclick="closeModal('addCardModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
             
@@ -942,6 +922,70 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         </div>
     </div>
 
+    <!-- 3️⃣ MODAL: AJOUTER UNE CATEGORIE -->
+    <div id="addCardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+        <div class="glass-panel w-full max-w-md rounded-2xl p-8 relative animate-card-enter">
+            <button onclick="closeModal('addCardModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+            
+            <h3 class="text-2xl font-bold text-white mb-6">Ajouter une Categorie</h3>
+            
+            <form action="cards.php" method="POST" class="space-y-5">
+                
+                <!-- Choix de la banque (Style Visuel) -->
+                <!-- <div>
+                    <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
+                    <div class="grid grid-cols-3 gap-2 mt-2">
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bank_type" value="cih" class="peer sr-only" checked>
+                            <div class="h-12 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">CIH</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bank_type" value="bp" class="peer sr-only">
+                            <div class="h-12 rounded-lg bg-gradient-to-br from-amber-600 to-amber-900 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">BP</div>
+                        </label>
+                        <label class="cursor-pointer">
+                            <input type="radio" name="bank_type" value="attijari" class="peer sr-only">
+                            <div class="h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-700 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">AWB</div>
+                        </label>
+                    </div>
+                </div> -->
+                    
+                    <!-- Numéro Carte -->
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">nom</label>
+                        <input type="text" required name="last_4" maxlength="4" placeholder="Ex: nouriture" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    
+                    <!-- Solde Initial -->
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">limite mensuels</label>
+                        <input type="number" required name="last_4" maxlength="4" placeholder="Ex: 0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    
+                    <!-- RECURRENCE TOGGLE -->
+                    <div class="flex items-center justify-between w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-rotate"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">Récurrent</p>
+                                <p class="text-[10px] text-slate-400">Répéter chaque mois</p>
+                            </div>
+                        </div>
+                        <!-- Switch Component -->
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="check_recurring" value= "1" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
+                        </label>
+                    </div>
+                    <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
+                    Activer la carte
+                </button>
+
+            </form>
+        </div>
+    </div>
     
 
     <script>
