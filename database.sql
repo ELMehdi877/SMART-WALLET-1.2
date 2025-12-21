@@ -97,8 +97,8 @@ CREATE TABLE if not exists category (
 DROP TABLE IF EXISTS expenses;
 CREATE TABLE if not exists expenses (
     id int PRIMARY key AUTO_INCREMENT,
-    user_id INT,
-    CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
+    category_id INT,
+    CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
     card_id INT,
     CONSTRAINT fk_expenses_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
     amount DECIMAL(10, 2) not null check (amount > 0),

@@ -469,6 +469,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Portefeuille Digital</p>
                 <h1 class="text-4xl font-bold text-white">Gestion des <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Cartes</span></h1>
             </div>
+            <?php 
+                    if (isset($_SESSION["not_card"])) {
+                        echo $_SESSION["not_card"];
+                        unset($_SESSION["not_card"]);
+                    }
+                    if (isset($_SESSION["category_existe"])) {
+                        echo $_SESSION["category_existe"];
+                        unset($_SESSION["category_existe"]);
+                    }
+                    if (isset($_SESSION["limite"])) {
+                        echo $_SESSION["limite"];
+                        unset($_SESSION["limite"]);
+                    }
+                    if (isset($_SESSION["not_balance"])) {
+                        echo $_SESSION["not_balance"];
+                        unset($_SESSION["not_balance"]);
+                    }
+
+                ?>
             <button onclick="openModal('addCardModal')" class="btn-shine-anim bg-gradient-to-r from-gold-400 to-gold-600 hover:to-gold-500 text-black font-bold px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] transition transform hover:-translate-y-1 flex items-center gap-2">
                 <i class="fa-solid fa-plus"></i> Nouvelle Carte
             </button>
@@ -570,7 +589,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </h3>
                 <form action="incomes.php" method="POST" class="space-y-4">
                     
-                    
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
                         <input type="number" step="0.01" required name="income_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
@@ -581,7 +599,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
-                        <input type="date" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="datetime-local" required name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div class="flex justify-center my-2">
                         <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
@@ -639,7 +657,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </form>
             </div>
 
-            <!-- Historique des mouvements -->
+            <!-- Historique des mouvements revenus-->
             <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
@@ -751,14 +769,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div> -->
                     <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
-                    <select required name="expense_category" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-l">
+                    <select required name="category_id" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-l">
                         <option value="" disabled selected>Choisir une catégorie</option>
                         <?php
                         $stmt = $pdo->prepare("SELECT id,category_name FROM category WHERE user_id = ?");
                         $stmt->execute([$user_id]);
                         $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
                         foreach($categories as $category){
-                            echo '<option value="'.$category["category_name"].'">'.$category["category_name"].'</option>';
+                            echo '<option value="'.$category["id"].'">'.$category["category_name"].'</option>';
                         }
                         ?>
                         
@@ -774,7 +792,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
-                        <input type="datetime-local" name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="datetime-local" required name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     
                     <div class="flex justify-center my-2">
@@ -833,7 +851,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </form>
             </div>
 
-            <!-- Historique des mouvements dépense -->
+            <!-- Historique des mouvements dépenses -->
             <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
@@ -856,7 +874,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                              $stmt = $pdo->prepare("SELECT e.expense_date,e.amount,c.bank_name,c.card_name
                              FROM expenses e 
                              LEFT JOIN cards c ON e.card_id = c.id
-                             WHERE e.user_id = ? ORDER BY e.created_at DESC limit 5 
+                             WHERE c.user_id = ? ORDER BY e.created_at DESC limit 5 
                              ");
                              $stmt->execute([$user_id]);
                              $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC) ?? NULL;
@@ -1115,6 +1133,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 document.body.style.overflow = 'auto';
             });
         });
+        
     </script>
 
 </body>

@@ -7,6 +7,8 @@ if (!isset($_SESSION["user_existe"])) {
 $user_id = $_SESSION["user_existe"][0];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
+require("check_card.php");
+
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["income_affect"])){
     if (isset($_POST["card_id"]) && isset($_POST["income_amount"]) && isset($_POST["income_description"]) && isset($_POST["income_date"])) {
 
