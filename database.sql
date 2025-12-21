@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS cards (
     bank_name VARCHAR(15) NOT NULL,
     card_name VARCHAR(15) NOT NULL,
     card_color VARCHAR(10) NOT NULL,
-    balance DECIMAL(12, 2) CHECK (balance > 0),
+    balance DECIMAL(12, 2) CHECK (balance >= 0),
     last_4 INT CHECK (last_4 > 0),
     -- operation VARCHAR(30) NOT NULL,
     -- amount DECIMAL(12, 2) CHECK (amount > 0),
@@ -74,37 +74,39 @@ CREATE TABLE if not exists incomes (
     CONSTRAINT fk_incomes_user FOREIGN KEY (user_id) REFERENCES users (id),
     card_id INT,
     CONSTRAINT fk_incomes_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
-    amount DECIMAL(10, 2) not null check (amount > 0),
+    amount DECIMAL(10, 2) not null check (amount >= 0),
     description VARCHAR(35) not null,
-    income_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
+    income_date DATE DEFAULT(CURRENT_DATE),
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
 #creation de tableau category
-DROP TABLE IF EXISTS category;
-CREATE TABLE if not exists category (
-    id int PRIMARY key AUTO_INCREMENT,
-    user_id INT,
-    CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
-    name VARCHAR(35) not null,
-    description VARCHAR(35) not null,
-    monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
-    created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
-);
+-- DROP TABLE IF EXISTS category;
+-- CREATE TABLE if not exists category (
+--     id int PRIMARY key AUTO_INCREMENT,
+--     user_id INT,
+--     CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
+--     name VARCHAR(35) not null,
+--     description VARCHAR(35) not null,
+--     monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
+--     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
+-- );
 
 
 #creation de tableau expenses
 DROP TABLE IF EXISTS expenses;
 CREATE TABLE if not exists expenses (
     id int PRIMARY key AUTO_INCREMENT,
+    user_id INT,
+    CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
     card_id INT,
     CONSTRAINT fk_expenses_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
-    category_id INT,
-    
-    CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
+    category VARCHAR(35) not null,
     amount DECIMAL(10, 2) not null check (amount > 0),
     description VARCHAR(35) not null,
+    monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
     expense_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
+    check_recurring BOOLEAN,
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 

@@ -584,7 +584,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div> -->
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
-                        <input type="number" required name="income_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="number" step="0.01" required name="income_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">description</label>
@@ -592,7 +592,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
-                        <input type="datetime-local" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="date" name="income_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div class="flex justify-center my-2">
                         <i class="fa-solid fa-arrow-down text-gold-400 animate-bounce"></i>
@@ -746,11 +746,11 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     </div> -->
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
-                        <input type="text" required name="expense_categori" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="text" required name="expense_category" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
-                        <input type="number" required name="expense_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="number" step="0.01" required name="expense_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">description</label>
@@ -759,6 +759,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
                         <input type="datetime-local" name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    </div>
+                    <div>
+                        <label class="text-xs text-slate-400 uppercase font-bold">Limites mensuelles</label>
+                        <input type="number" name="expense_limite" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     <!-- RECURRENCE TOGGLE -->
                     <div class="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/5">
@@ -773,7 +777,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </div>
                         <!-- Switch Component -->
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" name="limite" value= "1" class="sr-only peer">
+                            <input type="checkbox" name="check_recurring" value= "1" class="sr-only peer">
                             <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
                         </label>
                     </div>
@@ -852,37 +856,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <!-- Ligne 1 -->
-                             <?php
-                             $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
-                             FROM expens i 
-                             LEFT JOIN cards c ON i.card_id = c.id
-                             WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
-                             ");
-                             $stmt->execute([$user_id]);
-                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                             foreach($last_affect as $income){
-                                echo '
-                                    <tr class="group hover:bg-white/5 transition">
-                                        <td class="py-4 pl-2">
-                                            <div class="text-[10px] text-slate-300">'.$income["income_date"].'</div>
-                                        </td>
-                                        <td class="py-4">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-4 rounded bg-orange-500"></div>
-                                                <span class="text-slate-300">'.$income["bank_name"].'</span>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 font-mono font-bold text-emerald-400">+ '.$income["amount"].' DH</td>
-                                        <td class="py-4 text-right pr-2">
-                                            <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                        </td>
-                                    </tr>
-                                ';
-                             }
-                             ?>
+                             <!--  -->
                             
                             <!-- Ligne 2 -->
-                            <!-- <tr class="group hover:bg-white/5 transition">
+                             <tr class="group hover:bg-white/5 transition">
                                 <td class="py-4 pl-2">
                                     <div class="font-bold text-white">Freelance Mission</div>
                                     <div class="text-[10px] text-slate-400">20/01/2025</div>
@@ -897,7 +874,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 <td class="py-4 text-right pr-2">
                                     <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
                                 </td>
-                            </tr> -->
+                            </tr> 
                         </tbody>
                     </table>
                 </div>
