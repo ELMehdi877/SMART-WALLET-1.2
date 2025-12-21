@@ -100,6 +100,7 @@ CREATE TABLE if not exists expenses (
     card_id INT,
     CONSTRAINT fk_expenses_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
     category_id INT,
+    
     CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
     amount DECIMAL(10, 2) not null check (amount > 0),
     description VARCHAR(35) not null,

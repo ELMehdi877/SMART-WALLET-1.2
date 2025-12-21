@@ -760,6 +760,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <label class="text-xs text-slate-400 uppercase font-bold">DATE</label>
                         <input type="datetime-local" name="expense_date" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
+                    <!-- RECURRENCE TOGGLE -->
                     <div class="flex items-center justify-between p-4 rounded-xl border border-white/5 bg-white/5">
                         <div class="flex items-center gap-3">
                             <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center text-sm">
@@ -772,7 +773,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </div>
                         <!-- Switch Component -->
                         <label class="relative inline-flex items-center cursor-pointer">
-                            <input type="checkbox" class="sr-only peer">
+                            <input type="checkbox" name="limite" value= "1" class="sr-only peer">
                             <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
                         </label>
                     </div>
@@ -826,7 +827,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </div>
                     </div>
 
-                    <button type="submit" name="income_affect" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gold-400 transition shadow-lg">
+                    <button type="submit" name="expense_affect" class="w-full mt-4 bg-white text-black font-bold py-3 rounded-xl hover:bg-gold-400 transition shadow-lg">
                         Valider l'affectation
                     </button>
                 </form>
@@ -853,7 +854,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                             <!-- Ligne 1 -->
                              <?php
                              $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
-                             FROM incomes i 
+                             FROM expens i 
                              LEFT JOIN cards c ON i.card_id = c.id
                              WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
                              ");
