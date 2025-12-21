@@ -570,18 +570,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </h3>
                 <form action="incomes.php" method="POST" class="space-y-4">
                     
-                    <!-- <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold ml-1">Sélectionner un Revenu</label>
-                        <select name="income_category" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 transition">
-                            <option value="" disabled selected>Choisir une catégorie</option>
-                            <option value="ALL">ALL</option>
-                            <option value="Salaire">Salaire</option>
-                            <option value="Prime">Prime</option>
-                            <option value="Bonus">Bonus</option>
-                            <option value="Revenus freelancing">Revenus freelancing</option>
-                        </select>
-                        
-                    </div> -->
+                    
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
                         <input type="number" step="0.01" required name="income_amount" placeholder="0.00" class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
@@ -677,24 +666,37 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                              ");
                              $stmt->execute([$user_id]);
                              $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                             foreach($last_affect as $income){
-                                echo '
-                                    <tr class="group hover:bg-white/5 transition">
-                                        <td class="py-4 pl-2">
-                                            <div class="text-[10px] text-slate-300">'.$income["income_date"].'</div>
-                                        </td>
-                                        <td class="py-4">
-                                            <div class="flex items-center gap-2">
-                                                <div class="w-6 h-4 rounded bg-orange-500"></div>
-                                                <span class="text-slate-300">'.$income["bank_name"].'</span>
-                                            </div>
-                                        </td>
-                                        <td class="py-4 font-mono font-bold text-emerald-400">+ '.$income["amount"].' DH</td>
-                                        <td class="py-4 text-right pr-2">
-                                            <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                        </td>
-                                    </tr>
-                                ';
+                             if (empty($last_affect)) {
+                                echo "
+            
+                                        <tr>
+                                            <td colspan='5' class='px-4 py-16 text-center'>
+                                                <div class='text-6xl mb-4 opacity-50'>💰</div>
+                                                <p class='text-gray-400'>Aucun revenu enregistré</p>
+                                            </td>
+                                        </tr>
+                                        ";
+                             }
+                             else {
+                                foreach($last_affect as $income){
+                                    echo '
+                                        <tr class="group hover:bg-white/5 transition">
+                                            <td class="py-4 pl-2">
+                                                <div class="text-[10px] text-slate-300">'.$income["income_date"].'</div>
+                                            </td>
+                                            <td class="py-4">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-6 h-4 rounded bg-orange-500"></div>
+                                                    <span class="text-slate-300">'.$income["bank_name"].'</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-4 font-mono font-bold text-emerald-400">+ '.$income["amount"].' DH</td>
+                                            <td class="py-4 text-right pr-2">
+                                                <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                            </td>
+                                        </tr>
+                                    ';
+                                }
                              }
                              ?>
                             
@@ -727,6 +729,9 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
             
             <!-- Formulaire d'affectation -->
             <div class="lg:col-span-1 glass-panel rounded-3xl p-6 h-fit sticky top-28">
+                <button onclick="openModal('addCategoryModal')" class="btn-shine-anim bg-gradient-to-r from-red-800 to-red-300 hover:to-red-500 text-black font-bold px-6 py-3 rounded-xl shadow-[0_0_20px_rgba(234,179,8,0.3)] transition transform hover:-translate-y-1 flex items-center gap-2">
+                    <i class="fa-solid fa-plus"></i> Nouneaux Categorie
+                </button>
                 <h3 class="text-xl font-bold text-white mb-6 flex items-center gap-2">
                     <span class="w-1 h-6 bg-gold-400 rounded-full"></span> Affecter un Depense
                 </h3>
@@ -745,8 +750,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         
                     </div> -->
                     <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
-                        <input type="text" required name="expense_category" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                    <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
+                    <select required name="expense_category" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-l">
+                        <option value="" disabled selected>Choisir une catégorie</option>
+                        <?php
+                        $stmt = $pdo->prepare("SELECT id,category_name FROM category WHERE user_id = ?");
+                        $stmt->execute([$user_id]);
+                        $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        foreach($categories as $category){
+                            echo '<option value="'.$category["category_name"].'">'.$category["category_name"].'</option>';
+                        }
+                        ?>
+                        
+                    </select>
                     </div>
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">MONTANTS</label>
@@ -817,7 +833,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </form>
             </div>
 
-            <!-- Historique des mouvements -->
+            <!-- Historique des mouvements dépense -->
             <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
@@ -836,10 +852,46 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <!-- Ligne 1 -->
-                             <!--  -->
-                            
+                            <?php
+                             $stmt = $pdo->prepare("SELECT e.expense_date,e.amount,c.bank_name,c.card_name
+                             FROM expenses e 
+                             LEFT JOIN cards c ON e.card_id = c.id
+                             WHERE e.user_id = ? ORDER BY e.created_at DESC limit 5 
+                             ");
+                             $stmt->execute([$user_id]);
+                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC) ?? NULL;
+                             if (empty($last_affect)) {
+                                echo "<tr>
+                                    <td colspan='5' class='px-4 py-16 text-center'>
+                                        <div class='text-6xl mb-4 opacity-50'>🛒</div>
+                                        <p class='text-gray-400'>Aucune dépense enregistrée</p>
+                                    </td>
+                                </tr>";;
+                             }
+                             else {
+                                foreach($last_affect as $expense){
+                                    echo '
+                                        <tr class="group hover:bg-white/5 transition">
+                                            <td class="py-4 pl-2">
+                                                <div class="text-[10px] text-slate-300">'.$expense["expense_date"].'</div>
+                                            </td>
+                                            <td class="py-4">
+                                                <div class="flex items-center gap-2">
+                                                    <div class="w-6 h-4 rounded bg-orange-500"></div>
+                                                    <span class="text-slate-300">'.$expense["bank_name"].'</span>
+                                                </div>
+                                            </td>
+                                            <td class="py-4 font-mono font-bold text-emerald-400">+ '.$expense["amount"].' DH</td>
+                                            <td class="py-4 text-right pr-2">
+                                                <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                            </td>
+                                        </tr>
+                                    ';
+                                }
+                             }
+                             ?>
                             <!-- Ligne 2 -->
-                             <tr class="group hover:bg-white/5 transition">
+                             <!-- <tr class="group hover:bg-white/5 transition">
                                 <td class="py-4 pl-2">
                                     <div class="font-bold text-white">Freelance Mission</div>
                                     <div class="text-[10px] text-slate-400">20/01/2025</div>
@@ -854,7 +906,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 <td class="py-4 text-right pr-2">
                                     <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
                                 </td>
-                            </tr> 
+                            </tr>  -->
                         </tbody>
                     </table>
                 </div>
@@ -865,7 +917,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     </main>
 
     <!-- 3️⃣ MODAL: AJOUTER UNE CARTE -->
-    <div id="addardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div id="addCardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-panel w-full max-w-md rounded-2xl p-8 relative animate-card-enter">
             <button onclick="closeModal('addCardModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
             
@@ -923,13 +975,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     </div>
 
     <!-- 3️⃣ MODAL: AJOUTER UNE CATEGORIE -->
-    <div id="addCardModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+    <div id="addCategoryModal" class="hidden fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
         <div class="glass-panel w-full max-w-md rounded-2xl p-8 relative animate-card-enter">
-            <button onclick="closeModal('addCardModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
+            <button onclick="closeModal('addCategoryModal')" class="absolute top-4 right-4 text-slate-400 hover:text-white"><i class="fas fa-times"></i></button>
             
             <h3 class="text-2xl font-bold text-white mb-6">Ajouter une Categorie</h3>
             
-            <form action="cards.php" method="POST" class="space-y-5">
+            <form action="categorie.php" method="POST" class="space-y-5">
                 
                 <!-- Choix de la banque (Style Visuel) -->
                 <!-- <div>
@@ -953,13 +1005,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     <!-- Numéro Carte -->
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">nom</label>
-                        <input type="text" required name="last_4" maxlength="4" placeholder="Ex: nouriture" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="text" required name="category_name" placeholder="Ex: nouriture" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     
                     <!-- Solde Initial -->
                     <div>
                         <label class="text-xs text-slate-400 uppercase font-bold">limite mensuels</label>
-                        <input type="number" required name="last_4" maxlength="4" placeholder="Ex: 0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
+                        <input type="number" required name="category_monthly_limite" placeholder="Ex: 0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">
                     </div>
                     
                     <!-- RECURRENCE TOGGLE -->
@@ -979,8 +1031,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                             <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
                         </label>
                     </div>
-                    <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
-                    Activer la carte
+                    <button type="submit" name="add_category" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
+                    ENREJISTER
                 </button>
 
             </form>
@@ -1030,8 +1082,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 }
             }
         }
+        //fonction affiche le modale
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+
+        
+
         const menuBtn = document.getElementById('menuToggle');
         const mobileMenu = document.getElementById('mobileMenu');
         const mobileLinks = document.querySelectorAll('.mobile-link');

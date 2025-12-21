@@ -86,8 +86,9 @@ CREATE TABLE if not exists category (
     id int PRIMARY key AUTO_INCREMENT,
     user_id INT,
     CONSTRAINT fk_category_users FOREIGN KEY (user_id) REFERENCES users (id),
-    name VARCHAR(35) not null,
+    category_name VARCHAR(35) not null,
     monthly_limite DECIMAL(10, 2) not null check (monthly_limite > 0),
+    check_recurring BOOLEAN,
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
