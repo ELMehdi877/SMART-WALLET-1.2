@@ -408,8 +408,58 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                     </div>
 
                     <div class="space-y-4">
+                        <?php 
+                        $stmt = $pdo->query("SELECT t.sender_id,t.receiver_id,t.amount,t.created_at,u_sender.fullname AS sender_name,u_sender.email AS sender_email,u_receiver.fullname AS receiver_name,u_receiver.email AS receiver_email
+                                FROM transfers t 
+                                LEFT JOIN users u_sender ON u_sender.id = t.sender_id
+                                LEFT JOIN users u_receiver ON u_receiver.id = t.receiver_id
+                                ORDER BY t.created_at DESC");
+                        $transfers = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                        foreach($transfers as $transfer){
+                            if($transfer["sender_id"] == $user_id) {
+                                echo ' <!-- Transaction 2 : Envoyé -->
+                                <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 shadow-inner">
+                                            <i class="fa-solid fa-arrow-up-long"></i>
+                                        </div>
+                                        <div>
+                                            <p class="font-bold text-white">'.$transfer['receiver_name'].'</p>
+                                            <p class="text-xs text-slate-500">'.$transfer['receiver_email'].' • '.$transfer['created_at'].'</p>
+                                        </div>
+                                    </div>
+                                    <div class="text-right">
+                                        <p class="font-mono font-bold text-white">- '.$transfer['amount'].' DH</p>
+                                        <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Depuis BMCE</p>
+                                    </div>
+                                </div>';
+                            }
+                            elseif ($transfer["receiver_id"] == $user_id) {
+                                echo ' <!-- Transaction 1 : Reçu -->
+                               <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                                   <div class="flex items-center gap-4">
+                                       <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner">
+                                           <i class="fa-solid fa-arrow-down-long"></i>
+                                       </div>
+                                       <div>
+                                           <p class="font-bold text-white">'.$transfer['sender_name'].'</p>
+                                           <p class="text-xs text-slate-500">'.$transfer['sender_email'].' • '.$transfer['created_at'].'</p>
+                                       </div>
+                                   </div>
+                                   <div class="text-right">
+                                       <p class="font-mono font-bold text-emerald-400">+ '.$transfer['amount'].' DH</p>
+                                       <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Vers CIH Principale</p>
+                                   </div>
+                               </div> ';
+                            }
+
+                        }
+
+
+                            
+                        ?>
                         <!-- Transaction 1 : Reçu -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner">
                                     <i class="fa-solid fa-arrow-down-long"></i>
@@ -423,10 +473,10 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                                 <p class="font-mono font-bold text-emerald-400">+ 1,200.00 DH</p>
                                 <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Vers CIH Principale</p>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Transaction 2 : Envoyé -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 shadow-inner">
                                     <i class="fa-solid fa-arrow-up-long"></i>
@@ -440,10 +490,10 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                                 <p class="font-mono font-bold text-white">- 450.00 DH</p>
                                 <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Depuis BMCE</p>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Transaction 3 : Envoyé -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 shadow-inner">
                                     <i class="fa-solid fa-arrow-up-long"></i>
@@ -457,10 +507,10 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                                 <p class="font-mono font-bold text-white">- 2,500.00 DH</p>
                                 <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Paiement Loyer</p>
                             </div>
-                        </div>
+                        </div> -->
 
                         <!-- Transaction 4 : Reçu -->
-                        <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
+                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
                             <div class="flex items-center gap-4">
                                 <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner">
                                     <i class="fa-solid fa-arrow-down-long"></i>
@@ -474,7 +524,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                                 <p class="font-mono font-bold text-emerald-400">+ 125.00 DH</p>
                                 <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Remboursement</p>
                             </div>
-                        </div>
+                        </div> -->
                     </div>
                 </section>
 

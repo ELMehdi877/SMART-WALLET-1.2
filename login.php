@@ -388,7 +388,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
                 <!-- Email -->
                 <div class="relative">
-                    <input type="email" name="login_email" id="email"
+                    <input type="email" required name="login_email" id="email"
                         class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium"
                         placeholder="Email">
                     <label for="email"
@@ -399,7 +399,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
 
                 <!-- Mot de passe -->
                 <div class="relative">
-                    <input type="password" name="login_password" id="password"
+                    <input type="password" required name="login_password" id="password"
                         class="custom-input peer w-full h-12 px-4 rounded-xl outline-none text-white placeholder-transparent font-medium"
                         placeholder="Password">
                     <label for="password"
@@ -421,7 +421,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                 </div>
 
                 <!-- Bouton Connexion -->
-                <button type="submit" name="login"
+                <button type="submit"  name="login"
                     class="w-full py-4 rounded-xl font-bold text-black bg-gradient-to-r from-gold-300 via-gold-500 to-gold-400 shadow-[0_10px_30px_rgba(234,179,8,0.3)] hover:shadow-[0_15px_40px_rgba(234,179,8,0.5)] transform hover:-translate-y-1 transition duration-300 btn-shine-effect animate-pulse-gold tracking-wide uppercase text-sm relative overflow-hidden">
                     Se connecter
                 </button>

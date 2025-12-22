@@ -463,8 +463,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         <!-- HEADER SECTION -->
         <header class="flex flex-col md:flex-row justify-between items-end gap-4 animate-card-enter">
             <div>
-                <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Portefeuille Digital</p>
-                <h1 class="btn-shine-anim text-4xl font-bold text-white">Gestion des <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Cartes</span></h1>
+                <?php 
+                $stmt = $pdo->prepare("SELECT fullname FROM users WHERE id = ?");
+                $stmt->execute([$user_id]);
+                $fullname = $stmt->fetch(PDO::FETCH_ASSOC);
+                echo '<h1 class="btn-shine-anim text-4xl font-bold text-white">Bonjour <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600 uppercase">'.$fullname["fullname"].'</span></h1>';
+                ?>
+                <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Gestion des Cartes</p>
+                
             </div>
             <?php 
                     if (isset($_SESSION["not_card"])) {
