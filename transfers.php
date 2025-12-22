@@ -46,6 +46,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
 
             $stmt4 = $pdo->prepare("UPDATE cards SET balance = balance + ? WHERE id = ? AND user_id = ?");
             $stmt4->execute([$sender_amount,$card_reciever["id"],$user_sender['id']]);
+            $_SESSION['success'] = "✅ Transfert effectué avec succès !";
         }
         header("Location: transfers.php");
        exit();
@@ -291,7 +292,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
         <!-- HEADER -->
         <header class="animate-slide-up">
             <p class="text-gold-500 text-xs font-mono uppercase tracking-[0.3em] mb-2">Service de transfert élite</p>
-            <h1 class="text-4xl md:text-5xl font-bold text-white">Envoyez & <span class="text-gradient-gold">Recevez</span></h1>
+            <h1 class="text-4xl md:text-5xl font-bold text-white mb-1">Envoyez & <span class="text-gradient-gold">Recevez</span></h1>
             <?php
                 if (isset($_SESSION["not_user"])) {
                     echo $_SESSION["not_user"];
@@ -300,6 +301,10 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                 if (isset($_SESSION["not_balance"])) {
                     echo $_SESSION["not_balance"];
                     unset($_SESSION["not_balance"]);
+                }
+                if (isset($_SESSION["success"])) {
+                    echo $_SESSION["success"];
+                    unset($_SESSION["success"]);
                 }
             ?>
         </header>
@@ -458,73 +463,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
 
                             
                         ?>
-                        <!-- Transaction 1 : Reçu -->
-                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner">
-                                    <i class="fa-solid fa-arrow-down-long"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-white">Yassine El Amrani</p>
-                                    <p class="text-xs text-slate-500">ID: #8829 • 20 Déc, 14:20</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-mono font-bold text-emerald-400">+ 1,200.00 DH</p>
-                                <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Vers CIH Principale</p>
-                            </div>
-                        </div> -->
 
-                        <!-- Transaction 2 : Envoyé -->
-                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 shadow-inner">
-                                    <i class="fa-solid fa-arrow-up-long"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-white">Sanae Bennani</p>
-                                    <p class="text-xs text-slate-500">sanae@email.com • 18 Déc, 09:15</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-mono font-bold text-white">- 450.00 DH</p>
-                                <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Depuis BMCE</p>
-                            </div>
-                        </div> -->
-
-                        <!-- Transaction 3 : Envoyé -->
-                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-gold-500/10 flex items-center justify-center text-gold-500 shadow-inner">
-                                    <i class="fa-solid fa-arrow-up-long"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-white">Reda Mansouri</p>
-                                    <p class="text-xs text-slate-500">reda.m@work.ma • 15 Déc, 18:40</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-mono font-bold text-white">- 2,500.00 DH</p>
-                                <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Paiement Loyer</p>
-                            </div>
-                        </div> -->
-
-                        <!-- Transaction 4 : Reçu -->
-                        <!-- <div class="flex items-center justify-between p-4 rounded-2xl hover:bg-white/5 transition-colors border border-transparent hover:border-white/5">
-                            <div class="flex items-center gap-4">
-                                <div class="w-12 h-12 rounded-full bg-emerald-500/10 flex items-center justify-center text-emerald-500 shadow-inner">
-                                    <i class="fa-solid fa-arrow-down-long"></i>
-                                </div>
-                                <div>
-                                    <p class="font-bold text-white">Netflix Premium</p>
-                                    <p class="text-xs text-slate-500">Refund #9901 • 12 Déc, 11:00</p>
-                                </div>
-                            </div>
-                            <div class="text-right">
-                                <p class="font-mono font-bold text-emerald-400">+ 125.00 DH</p>
-                                <p class="text-[9px] text-slate-600 uppercase tracking-tighter">Remboursement</p>
-                            </div>
-                        </div> -->
                     </div>
                 </section>
 
