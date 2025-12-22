@@ -56,13 +56,13 @@ DROP Table if EXISTS transfers;
 CREATE Table IF NOT EXISTS transfers (
     id INT AUTO_INCREMENT PRIMARY KEY,
     sender_id INT,
-    CONSTRAINT fk_transfers_sender FOREIGN KEY (sender_id) REFERENCES users (id),
+    CONSTRAINT fk_transfers_sender FOREIGN KEY (sender_id) REFERENCES users (id) ON DELETE CASCADE,
     receiver_id INT,
-    CONSTRAINT fk_transfers_receiver FOREIGN KEY (receiver_id) REFERENCES users (id),
+    CONSTRAINT fk_transfers_receiver FOREIGN KEY (receiver_id) REFERENCES users (id) ON DELETE CASCADE,
     sender_card_id INT,
-    CONSTRAINT fk_transfers_sender_card FOREIGN KEY (sender_card_id) REFERENCES cards (id),
+    CONSTRAINT fk_transfers_sender_card FOREIGN KEY (sender_card_id) REFERENCES cards (id) ON DELETE CASCADE,
     receiver_card_id INT,
-    CONSTRAINT fk_transfers_receiver_card FOREIGN KEY (receiver_card_id) REFERENCES cards (id),
+    CONSTRAINT fk_transfers_receiver_card FOREIGN KEY (receiver_card_id) REFERENCES cards (id) ON DELETE CASCADE,
     amount DECIMAL(10, 2) CHECK (amount > 0),
     description VARCHAR(50) NOT NULL,
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)

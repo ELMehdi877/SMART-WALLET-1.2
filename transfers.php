@@ -5,14 +5,51 @@ $user_id = $_SESSION["user_existe"][0];
 $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
 
 if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
-    if (isset($_POST["card_recep_id"]) && isset($_POST["sender_email"]) && isset($_POST["sender_amount"]) && isset($_POST["sender_description"])) {
-        $stmt = $pdo->prepare("INSERT INTO cards (balance)
-        SELECT u.id, ?
-        FROM users u
-        JOIN cards c ON c.user_id = u.id
-        WHERE u.email = ?
-        AND c.card_principale = 1");
+    
+    if (isset($_POST["card_sender_id"]) && isset($_POST["sender_email"]) && isset($_POST["sender_amount"]) && isset($_POST["sender_description"])) {
+        $card_sender_id = $_POST["card_sender_id"];
+        $sender_email = $_POST["sender_email"];
+        $sender_amount = $_POST["sender_amount"];
+        $sender_description = $_POST["sender_description"];
+
+        $stmt0 = $pdo->prepare("SELECT id FROM users WHERE email = ?");
+        $stmt0->execute([$sender_email]);
+        $user_sender = $stmt0->fetch(PDO::FETCH_ASSOC);
+
+        $stmt_check = $pdo->prepare("SELECT balance FROM cards WHERE id = ? AND user_id = ?");
+        $stmt_check->execute([$card_sender_id, $user_id]);
+        $card = $stmt_check->fetch(PDO::FETCH_ASSOC);
+
+        if ($sender_amount > $card['balance']) {
+            $_SESSION['not_balance'] = "⚠️ Vous n'avez pas le solde suffisant dans cette carte !";
+            header("Location: transfers.php");
+            exit(); 
         }
+
+
+       if (!empty($user_sender)) {
+            $stmt1 = $pdo->prepare("SELECT id FROM cards WHERE user_id = ? AND card_principale = 1");
+            $stmt1->execute([$user_sender['id']]);
+            $card_reciever = $stmt1->fetch(PDO::FETCH_ASSOC);
+       }
+       else {
+            $_SESSION['not_user'] = "⚠️ ce utilisateur n'existe pas !";
+            exit();
+       }
+
+        if(!empty($card_reciever["id"])){
+            $stmt2 = $pdo->prepare("INSERT INTO transfers(sender_id,receiver_id,sender_card_id,receiver_card_id,amount,description) VALUES (?,?,?,?,?,?)");
+            $stmt2->execute([$user_id,$user_sender['id'],$card_sender_id,$card_reciever["id"],$sender_amount,$sender_description]);
+            
+            $stmt3 = $pdo->prepare("UPDATE cards SET balance = balance - ? WHERE id = ? AND user_id = ?");
+            $stmt3->execute([$sender_amount,$card_sender_id,$user_id]);
+
+            $stmt4 = $pdo->prepare("UPDATE cards SET balance = balance + ? WHERE id = ? AND user_id = ?");
+            $stmt4->execute([$sender_amount,$card_reciever["id"],$user_sender['id']]);
+        }
+        header("Location: transfers.php");
+       exit();
+    }
 }
 ?>
 
@@ -255,8 +292,17 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
         <header class="animate-slide-up">
             <p class="text-gold-500 text-xs font-mono uppercase tracking-[0.3em] mb-2">Service de transfert élite</p>
             <h1 class="text-4xl md:text-5xl font-bold text-white">Envoyez & <span class="text-gradient-gold">Recevez</span></h1>
+            <?php
+                if (isset($_SESSION["not_user"])) {
+                    echo $_SESSION["not_user"];
+                    unset($_SESSION["not_user"]);
+                }
+                if (isset($_SESSION["not_balance"])) {
+                    echo $_SESSION["not_balance"];
+                    unset($_SESSION["not_balance"]);
+                }
+            ?>
         </header>
-
         <form action="transfers.php" method="POST" class="grid grid-cols-1 lg:grid-cols-3 gap-8">
         
             <!-- 1️⃣ COLONNE GAUCHE: CHOIX CARTE PRINCIPALE -->
@@ -276,7 +322,7 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                         
                         echo '
                             <label class="relative block cursor-pointer">
-                                <input type="radio" name="card_recep_id" value="'.$card["id"].'" class="peer hidden" checked>
+                                <input type="radio" name="card_sender_id" value="'.$card["id"].'" class="peer hidden" checked>
                                 
                                 <!-- Conteneur de la carte (Design) -->
                                 <div class="glass-panel p-5 rounded-2xl transition-all hover:bg-white/5 border border-transparent 
