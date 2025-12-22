@@ -9,9 +9,10 @@ DROP TABLE IF EXISTS users;
 
 CREATE TABLE IF NOT EXISTS users (
     id INT AUTO_INCREMENT PRIMARY KEY,
-    fullname VARCHAR(30) NOT NULL,
+   fullname VARCHAR(30) NOT NULL,
     email VARCHAR(100) NOT NULL UNIQUE,
     password VARCHAR(255) NOT NULL
+    
 );
 
 #creation de tableau code_OTP
@@ -38,6 +39,7 @@ CREATE TABLE IF NOT EXISTS cards (
     card_color VARCHAR(10) NOT NULL,
     balance DECIMAL(12, 2) CHECK (balance >= 0),
     last_4 INT CHECK (last_4 > 0),
+    card_principale BOOLEAN,
     -- operation VARCHAR(30) NOT NULL,
     -- amount DECIMAL(12, 2) CHECK (amount > 0),
     -- description VARCHAR (35) NOT NULL,
@@ -76,7 +78,7 @@ CREATE TABLE if not exists incomes (
     CONSTRAINT fk_incomes_cards FOREIGN KEY (card_id) REFERENCES cards (id) ON DELETE CASCADE,
     amount DECIMAL(10, 2) not null check (amount >= 0),
     description VARCHAR(35) not null,
-    income_date DATE DEFAULT(CURRENT_DATE),
+    income_date DATETIME DEFAULT(CURRENT_TIMESTAMP),
     created_at DATETIME DEFAULT(CURRENT_TIMESTAMP)
 );
 
@@ -97,6 +99,8 @@ CREATE TABLE if not exists category (
 DROP TABLE IF EXISTS expenses;
 CREATE TABLE if not exists expenses (
     id int PRIMARY key AUTO_INCREMENT,
+    user_id INT,
+    CONSTRAINT fk_expenses_users FOREIGN KEY (user_id) REFERENCES users (id),
     category_id INT,
     CONSTRAINT fk_expenses_category FOREIGN KEY (category_id) REFERENCES category (id),
     card_id INT,

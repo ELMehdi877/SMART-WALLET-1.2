@@ -15,9 +15,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         $card_name = $_POST["card_name"];
         $last_4 = $_POST["last_4"];
         $balance = $_POST["balance"];
-        $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance) VALUES (?,?,?,?,?)");
+        $card_principale = $_POST["card_principale"] ?? 0;
 
-        $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance]);
+        $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance,card_principale) VALUES (?,?,?,?,?,?)");
+        $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance,$card_principale]);
         header("Location: cards.php");
         exit();
     }
@@ -54,7 +55,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     <!-- Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- <script>
+    <script>
         tailwind.config = {
             theme: {
                 extend: {
@@ -96,7 +97,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 }
             }
         }
-    </script> -->
+    </script>
 
     <style>
         body {
@@ -405,16 +406,13 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </a>
             <!-- Menu Links -->
             <div class="hidden md:flex items-center gap-1 bg-white/5 rounded-full p-1 border border-white/5">
-                <a href="index.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Dashboard</a>
-                <a href="#" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Mes Cartes</a>
-                <a href="#" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Revenus</a>
+                <a href="index.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Home</a>
+                <a href="cards.php" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Mes Cartes</a>
+                <a href="history.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Historique</a>
+                <a href="transfers.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Transfers</a>
             </div>
-            <form action="logout.php" method="POST" class="hidden md:block">
-                <button type="submit" name="logout"
-                style="animation-delay: 0.3s; opacity: 1;" class=" mobile-link btn-hover-effect px-5 py-3 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
-                >
-                déconnexion
-             </button>
+            <form action="logout.php" method="POST" class="mobile-link" style="animation-delay: 0.5s">
+                <button type="submit" name="logout" class="px-5 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-full text-xs font-bold transition">Déconnexion</button>
             </form>
             <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
@@ -436,26 +434,25 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-600/10 rounded-full blur-[80px]"></div>
 
         <div class="flex flex-col items-center gap-8 text-center z-10">
-            <a href="#benefits"
+            <a href="index.php"
                 class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
-                style="animation-delay: 0.1s; opacity: 0;">Dashboard</a>
-            <a href="#security"
+                style="animation-delay: 0.1s; opacity: 0;">Home</a>
+            <a href="cards.php"
                 class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
                 style="animation-delay: 0.2s; opacity: 0;">Mes Cartes</a>
-            <a href="#business"
+            <a href="history.php"
                 class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
-                style="animation-delay: 0.3s; opacity: 0;">Revenus</a>
+                style="animation-delay: 0.3s; opacity: 0;">Historique</a>
+            <a href="transfers.php"
+                class="mobile-link text-2xl font-heading font-bold text-white hover:text-gold-400 transition"
+                style="animation-delay: 0.3s; opacity: 0;">Transfers</a>
 
             <div class="w-12 h-1 bg-white/10 rounded-full my-4 mobile-link" style="animation-delay: 0.4s; opacity: 0;">
             </div>
 
             
-            <form action="logout.php" method="POST">
-                <button type="submit" name="logout"
-                style="animation-delay: 0.3s; opacity: 0;" class="mobile-link btn-hover-effect px-8 py-4 bg-red-500/80 text-black font-bold rounded-full shadow-xl"
-                >
-                déconnexion
-             </button>
+            <form action="logout.php" method="POST" class="mobile-link" style="animation-delay: 0.5s">
+                <button type="submit" name="logout" class="px-5 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-full text-xs font-bold transition">Déconnexion</button>
             </form>
         </div>
     </div>
@@ -467,7 +464,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         <header class="flex flex-col md:flex-row justify-between items-end gap-4 animate-card-enter">
             <div>
                 <p class="text-slate-400 text-xs font-mono uppercase tracking-widest mb-1">Portefeuille Digital</p>
-                <h1 class="text-4xl font-bold text-white">Gestion des <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Cartes</span></h1>
+                <h1 class="btn-shine-anim text-4xl font-bold text-white">Gestion des <span class="text-transparent bg-clip-text bg-gradient-to-r from-gold-400 to-amber-600">Cartes</span></h1>
             </div>
             <?php 
                     if (isset($_SESSION["not_card"])) {
@@ -658,7 +655,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
             </div>
 
             <!-- Historique des mouvements revenus-->
-            <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
+            <div class="lg:col-span-2 glass-panel rounded-3xl p-6 w-full">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
                     <button class="text-xs text-gold-400 hover:text-white">Voir tout</button>
@@ -676,15 +673,15 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <!-- Ligne 1 -->
-                             <?php
-                             $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
-                             FROM incomes i 
-                             LEFT JOIN cards c ON i.card_id = c.id
-                             WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
-                             ");
-                             $stmt->execute([$user_id]);
-                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
-                             if (empty($last_affect)) {
+                                <?php
+                                $stmt = $pdo->prepare("SELECT i.income_date,i.amount,c.bank_name,c.card_name
+                                FROM incomes i 
+                                LEFT JOIN cards c ON i.card_id = c.id
+                                WHERE i.user_id = ? ORDER BY i.created_at DESC limit 5 
+                                ");
+                                $stmt->execute([$user_id]);
+                                $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC);
+                                if (empty($last_affect)) {
                                 echo "
             
                                         <tr>
@@ -694,8 +691,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                             </td>
                                         </tr>
                                         ";
-                             }
-                             else {
+                                }
+                                else {
                                 foreach($last_affect as $income){
                                     echo '
                                         <tr class="group hover:bg-white/5 transition">
@@ -715,8 +712,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                         </tr>
                                     ';
                                 }
-                             }
-                             ?>
+                                }
+                                ?>
                             
                             <!-- Ligne 2 -->
                             <!-- <tr class="group hover:bg-white/5 transition">
@@ -851,8 +848,8 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </form>
             </div>
 
-            <!-- Historique des mouvements dépenses -->
-            <div class="lg:col-span-2 glass-panel rounded-3xl p-6">
+             <!-- Historique des mouvements dépenses -->
+            <div class="lg:col-span-2 glass-panel rounded-3xl p-6 w-full">
                 <div class="flex justify-between items-center mb-6">
                     <h3 class="text-xl font-bold text-white">Dernières Affectations</h3>
                     <button class="text-xs text-gold-400 hover:text-white">Voir tout</button>
@@ -865,28 +862,29 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 <th class="pb-3 pl-2 font-bold text-white">Date</th>
                                 <th class="pb-3 font-bold text-white">Vers Carte</th>
                                 <th class="pb-3 font-bold text-white">Montant</th>
-                                <th class="pb-3 text-right font-bold text-white pr-2">Statut</th>
+                                <th class="pb-3 text-right font-bold text-white pr-2">Categorie</th>
                             </tr>
                         </thead>
                         <tbody class="divide-y divide-white/5">
                             <!-- Ligne 1 -->
                             <?php
-                             $stmt = $pdo->prepare("SELECT e.expense_date,e.amount,c.bank_name,c.card_name
-                             FROM expenses e 
-                             LEFT JOIN cards c ON e.card_id = c.id
-                             WHERE c.user_id = ? ORDER BY e.created_at DESC limit 5 
-                             ");
-                             $stmt->execute([$user_id]);
-                             $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC) ?? NULL;
-                             if (empty($last_affect)) {
+                                $stmt = $pdo->prepare("SELECT e.expense_date,e.amount,c.bank_name,c.card_name,cat.category_name
+                                FROM expenses e 
+                                LEFT JOIN cards c ON e.card_id = c.id
+                                LEFT JOIN category cat ON cat.id = e.category_id
+                                WHERE c.user_id = ? ORDER BY e.created_at DESC 
+                                ");
+                                $stmt->execute([$user_id]);
+                                $last_affect = $stmt->fetchAll(PDO::FETCH_ASSOC) ?? NULL;
+                                if (empty($last_affect)) {
                                 echo "<tr>
                                     <td colspan='5' class='px-4 py-16 text-center'>
                                         <div class='text-6xl mb-4 opacity-50'>🛒</div>
                                         <p class='text-gray-400'>Aucune dépense enregistrée</p>
                                     </td>
                                 </tr>";;
-                             }
-                             else {
+                                }
+                                else {
                                 foreach($last_affect as $expense){
                                     echo '
                                         <tr class="group hover:bg-white/5 transition">
@@ -901,30 +899,14 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                             </td>
                                             <td class="py-4 font-mono font-bold text-emerald-400">+ '.$expense["amount"].' DH</td>
                                             <td class="py-4 text-right pr-2">
-                                                <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
+                                                <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">'.$expense["category_name"].'</span>
                                             </td>
                                         </tr>
                                     ';
                                 }
-                             }
-                             ?>
-                            <!-- Ligne 2 -->
-                             <!-- <tr class="group hover:bg-white/5 transition">
-                                <td class="py-4 pl-2">
-                                    <div class="font-bold text-white">Freelance Mission</div>
-                                    <div class="text-[10px] text-slate-400">20/01/2025</div>
-                                </td>
-                                <td class="py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-4 rounded bg-amber-700"></div>
-                                        <span class="text-slate-300">B. Populaire</span>
-                                    </div>
-                                </td>
-                                <td class="py-4 font-mono font-bold text-emerald-400">+ 2,500 DH</td>
-                                <td class="py-4 text-right pr-2">
-                                    <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                </td>
-                            </tr>  -->
+                                }
+                                ?>
+                           
                         </tbody>
                     </table>
                 </div>
@@ -983,6 +965,24 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                     <label class="text-xs text-slate-400 uppercase font-bold">Solde Initial</label>
                     <input type="number" required name="balance" step="0.01" placeholder="0.00" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
                 </div>
+
+                <!-- carte principale -->
+                    <div class="flex items-center justify-between w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500">
+                        <div class="flex items-center gap-3">
+                            <div class="w-8 h-8 rounded-full bg-gold-500/20 text-gold-400 flex items-center justify-center text-sm">
+                                <i class="fa-solid fa-rotate"></i>
+                            </div>
+                            <div>
+                                <p class="text-sm font-bold text-white">Principale</p>
+                                <p class="text-[10px] text-slate-400">Définie comme une carte principale</p>
+                            </div>
+                        </div>
+                        <!-- Switch Component -->
+                        <label class="relative inline-flex items-center cursor-pointer">
+                            <input type="checkbox" name="card_principale" value= "1" class="sr-only peer">
+                            <div class="w-11 h-6 bg-slate-700 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-gold-500"></div>
+                        </label>
+                    </div>
 
                 <button type="submit" name="add_card" class="w-full py-4 rounded-xl bg-gold-500 text-black font-bold hover:bg-gold-400 transition shadow-[0_0_20px_rgba(234,179,8,0.3)] mt-2">
                     Activer la carte
@@ -1059,47 +1059,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
     
 
     <script>
-        tailwind.config = {
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        mono: ['Space Grotesk', 'monospace'],
-                    },
-                    colors: {
-                        dark: {
-                            900: '#050505',
-                            800: '#0A0A0A',
-                            card: 'rgba(20, 20, 20, 0.6)'
-                        },
-                        gold: {
-                            400: '#FACC15',
-                            500: '#EAB308',
-                            glow: 'rgba(250, 204, 21, 0.15)'
-                        }
-                    },
-                    animation: {
-                        'float': 'float 6s ease-in-out infinite',
-                        'card-enter': 'cardEnter 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards',
-                        'shimmer': 'shimmer 3s linear infinite',
-                    },
-                    keyframes: {
-                        float: {
-                            '0%, 100%': { transform: 'translateY(0)' },
-                            '50%': { transform: 'translateY(-10px)' },
-                        },
-                        cardEnter: {
-                            '0%': { opacity: '0', transform: 'translateY(50px) scale(0.9)' },
-                            '100%': { opacity: '1', transform: 'translateY(0) scale(1)' },
-                        },
-                        shimmer: {
-                            '0%': { transform: 'translateX(-150%) skewX(-15deg)' },
-                            '100%': { transform: 'translateX(150%) skewX(-15deg)' },
-                        }
-                    }
-                }
-            }
-        }
+       
         //fonction affiche le modale
         function openModal(id) { document.getElementById(id).classList.remove('hidden'); }
         function closeModal(id) { document.getElementById(id).classList.add('hidden'); }

@@ -26,7 +26,8 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["expense_affect"])){
                         WHERE c.user_id = ? AND c.id = ? ");
         $stmt3->execute([$user_id,$category_id]);
         $limite = $stmt3->fetch(PDO::FETCH_ASSOC);
-        if ($limite["total_expense"] > $limite["monthly_limite"]) {
+        $total = $expense_amount + $limite["total_expense"];
+        if ($total > $limite["monthly_limite"]) {
         $_SESSION['limite'] = "⚠️ tu as depasser la limite pour le categorie  {$limite["category_name"]}";
         }
 
