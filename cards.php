@@ -17,8 +17,19 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
         $balance = $_POST["balance"];
         $card_principale = $_POST["card_principale"] ?? 0;
 
+        
         $stmt = $pdo->prepare("INSERT INTO cards(user_id,bank_name,card_name,last_4,balance,card_principale) VALUES (?,?,?,?,?,?)");
         $stmt->execute([$user_id,$bank_name,$card_name,$last_4,$balance,$card_principale]);
+
+        if ($card_principale == 1) {
+            $stmt1 = $pdo->query("SELECT id FROM cards ORDER BY created_at DESC LIMIT 1");
+            $new_card_id = $stmt1->fetch(PDO::FETCH_ASSOC);
+
+            $stmt2 = $pdo->prepare("UPDATE cards SET card_principale = 0 WHERE id != ?");
+            
+            $stmt2->execute([$new_card_id["id"]]);
+        }
+
         header("Location: cards.php");
         exit();
     }
@@ -411,10 +422,10 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 <a href="history.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Historique</a>
                 <a href="transfers.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Transfers</a>
             </div>
-            <form action="logout.php" method="POST" class="mobile-link" style="animation-delay: 0.5s">
+            <form action="logout.php" method="POST" class="hidden md:flex mobile-link" style="animation-delay: 0.5s">
                 <button type="submit" name="logout" class="px-5 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-full text-xs font-bold transition">Déconnexion</button>
             </form>
-            <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
+            <div class="hidden md:flex w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
             </div>
             
@@ -613,13 +624,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <div class="grid grid-cols-2 gap-3 mt-1">
                             <!-- Option Radio Stylisée -->
 
-                            <!-- <label class="cursor-pointer">
-                                <input type="radio" name="card_id" value="0" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                    <span class="text-xs font-bold">1er card</span>
-                                </div>
-                            </label> -->
                             <?php
                             $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
                             $stmt->execute([$user_id]);
@@ -637,20 +641,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 }
                             
                             ?>
-                            <!-- <label class="cursor-pointer">
-                                <input type="radio" name="card_target" value="cih" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                    <span class="text-xs font-bold">CIH Bank</span>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="card_target" value="bp" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-amber-700"></span>
-                                    <span class="text-xs font-bold">B. Populaire</span>
-                                </div>
-                            </label> -->
+                            
                         </div>
                     </div>
 
@@ -721,23 +712,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 }
                                 ?>
                             
-                            <!-- Ligne 2 -->
-                            <!-- <tr class="group hover:bg-white/5 transition">
-                                <td class="py-4 pl-2">
-                                    <div class="font-bold text-white">Freelance Mission</div>
-                                    <div class="text-[10px] text-slate-400">20/01/2025</div>
-                                </td>
-                                <td class="py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-4 rounded bg-amber-700"></div>
-                                        <span class="text-slate-300">B. Populaire</span>
-                                    </div>
-                                </td>
-                                <td class="py-4 font-mono font-bold text-emerald-400">+ 2,500 DH</td>
-                                <td class="py-4 text-right pr-2">
-                                    <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                </td>
-                            </tr> -->
+                            
                         </tbody>
                     </table>
                 </div>
@@ -758,18 +733,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                 </h3>
                 <form action="depense.php" method="POST" class="space-y-4">
                     
-                    <!-- <div>
-                        <label class="text-xs text-slate-400 uppercase font-bold ml-1">Sélectionner un Revenu</label>
-                        <select name="income_category" class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 transition">
-                            <option value="" disabled selected>Choisir une catégorie</option>
-                            <option value="ALL">ALL</option>
-                            <option value="Salaire">Salaire</option>
-                            <option value="Prime">Prime</option>
-                            <option value="Bonus">Bonus</option>
-                            <option value="Revenus freelancing">Revenus freelancing</option>
-                        </select>
-                        
-                    </div> -->
                     <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Categoie</label>
                     <select required name="category_id" placeholder="EX: nouriture.." class="w-full bg-gray-500/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-l">
@@ -807,13 +770,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                         <div class="grid grid-cols-2 gap-3 mt-1">
                             <!-- Option Radio Stylisée -->
 
-                            <!-- <label class="cursor-pointer">
-                                <input type="radio" name="card_id" value="0" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                    <span class="text-xs font-bold">1er card</span>
-                                </div>
-                            </label> -->
                             <?php
                             $stmt = $pdo->prepare("SELECT * FROM cards WHERE user_id = ?");
                             $stmt->execute([$user_id]);
@@ -831,20 +787,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
                                 }
                             
                             ?>
-                            <!-- <label class="cursor-pointer">
-                                <input type="radio" name="card_target" value="cih" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-orange-500"></span>
-                                    <span class="text-xs font-bold">CIH Bank</span>
-                                </div>
-                            </label>
-                            <label class="cursor-pointer">
-                                <input type="radio" name="card_target" value="bp" class="peer sr-only">
-                                <div class="p-3 rounded-xl border border-white/10 bg-white/5 peer-checked:border-gold-500 peer-checked:bg-gold-500/10 transition flex flex-col items-center gap-2">
-                                    <span class="w-3 h-3 rounded-full bg-amber-700"></span>
-                                    <span class="text-xs font-bold">B. Populaire</span>
-                                </div>
-                            </label> -->
+                           
                         </div>
                     </div>
 
@@ -931,24 +874,7 @@ if ($_SERVER["REQUEST_METHOD"] === "POST" ) {
             
             <form action="cards.php" method="POST" class="space-y-5">
                 
-                <!-- Choix de la banque (Style Visuel) -->
-                <!-- <div>
-                    <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
-                    <div class="grid grid-cols-3 gap-2 mt-2">
-                        <label class="cursor-pointer">
-                            <input type="radio" name="bank_type" value="cih" class="peer sr-only" checked>
-                            <div class="h-12 rounded-lg bg-gradient-to-br from-orange-400 to-orange-600 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">CIH</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="bank_type" value="bp" class="peer sr-only">
-                            <div class="h-12 rounded-lg bg-gradient-to-br from-amber-600 to-amber-900 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">BP</div>
-                        </label>
-                        <label class="cursor-pointer">
-                            <input type="radio" name="bank_type" value="attijari" class="peer sr-only">
-                            <div class="h-12 rounded-lg bg-gradient-to-br from-yellow-500 to-yellow-700 peer-checked:ring-2 ring-white ring-offset-2 ring-offset-black opacity-50 peer-checked:opacity-100 flex items-center justify-center font-bold text-xs text-white">AWB</div>
-                        </label>
-                    </div>
-                </div> -->
+                
                 <div>
                     <label class="text-xs text-slate-400 uppercase font-bold">Banque</label>
                     <input type="text" required name="bank_name" placeholder="Ex: CHI / BMCE .." class="w-full bg-black/40 border border-white/10 rounded-xl p-3 mt-1 text-white outline-none focus:border-gold-500 font-mono tracking-widest text-center text-xl">

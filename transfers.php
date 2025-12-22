@@ -241,10 +241,10 @@ if($_SERVER["REQUEST_METHOD"] === "POST" && isset($_POST["sender_button"])){
                 <a href="history.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Historique</a>
                 <a href="transfers.php" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Transfers</a>
             </div>
-            <form action="logout.php" method="POST" class="mobile-link" style="animation-delay: 0.5s">
+            <form action="logout.php" method="POST" class="hidden md:flex mobile-link" style="animation-delay: 0.5s">
                 <button type="submit" name="logout" class="px-5 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-full text-xs font-bold transition">Déconnexion</button>
             </form>
-            <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
+            <div class="hidden md:flex w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
             </div>
             

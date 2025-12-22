@@ -9,14 +9,25 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         $stmt = $pdo->prepare("SELECT * FROM users WHERE email = ?");
         $stmt->execute([$login_email]);
         $user_existe = $stmt->fetch(PDO::FETCH_ASSOC);
-        if ($user_existe && password_verify($login_password,$user_existe['password'])) {
-            $_SESSION['user_existe'] = [$user_existe['id']];
-            // echo "valider";
-            header("Location: cards.php");
+
+        if (!empty($user_existe)) {
+            if ( password_verify($login_password,$user_existe['password'])) {
+                $_SESSION['user_existe'] = [$user_existe['id']];
+                // echo "valider";
+                header("Location: cards.php");
+                exit();
+            }
+            else {
+                $_SESSION["password_incorecte"] = "<p class='text-orange-300'>⚠️ mode de pasee incorecte !</p>" ;
+                
+            }
         }
         else {
-            echo "non valider";
+            $_SESSION["email_not_existe"] = "<p class='text-red-500'>⚠️ ce compte n'existe pas!</p>" ;
         }
+        header("Location: login.php");
+        exit();
+
     }
 }
 ?>
@@ -366,6 +377,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                     Bon <span class="text-gold-gradient">Retour</span>
                 </h2>
                 <p class="text-slate-400 text-sm">Identifiez-vous pour accéder à votre compte.</p>
+                <?php
+                    if (isset($_SESSION["email_not_existe"])) {
+                        echo $_SESSION["email_not_existe"];
+                        unset($_SESSION["email_not_existe"]);
+                    }
+                    if (isset($_SESSION["password_incorecte"])) {
+                        echo $_SESSION["password_incorecte"];
+                        unset($_SESSION["password_incorecte"]);
+                    }
+                ?>
             </div>
 
             <!-- MESSAGE INFO OTP (Design Alert Gold) -->

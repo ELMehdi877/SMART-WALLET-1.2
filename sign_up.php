@@ -9,9 +9,24 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
         $sign_up_email = trim($_POST["sign_up_email"]);
         $hashedPassword = password_hash($_POST["sign_up_password"], PASSWORD_DEFAULT);
 
-        $_SESSION["user"]=[$sign_up_fullname,$sign_up_email,$hashedPassword];
-        $stmt = $pdo->prepare("INSERT INTO users(fullname,email,password) VALUES (?,?,?)");
-        $stmt->execute($_SESSION["user"]);
+        $stmt0 = $pdo->prepare("SELECT email FROM users WHERE email = ?");
+        $stmt0->execute([$sign_up_email]);
+        $email_existe = $stmt0->fetch(PDO::FETCH_ASSOC);
+
+        if (empty($email_existe)) {
+            
+            $_SESSION["user"]=[$sign_up_fullname,$sign_up_email,$hashedPassword];
+            $stmt = $pdo->prepare("INSERT INTO users(fullname,email,password) VALUES (?,?,?)");
+            $stmt->execute($_SESSION["user"]);
+            $_SESSION["email_not_existe"] = "<p class='text-green-300'>✅ vous avez crée vous compte !</p>"; 
+        }
+
+        else {
+            $_SESSION["email_existe"] = "<p class='text-yellow-300'>⚠️ email déja existe !</p>" ;
+
+        }
+        header("Location: sign_up.php");
+        exit();
     } 
 }
 ?>
@@ -263,6 +278,16 @@ if($_SERVER["REQUEST_METHOD"] === "POST"){
                     <span class="text-gold-gradient">Créer un compte</span>
                 </h2>
                 <p class="text-slate-400 text-sm">Entrez vos informations pour commencer.</p>
+                <?php
+                    if (isset($_SESSION["email_not_existe"])) {
+                        echo $_SESSION["email_not_existe"];
+                        unset($_SESSION["email_not_existe"]);
+                    }
+                    if (isset($_SESSION["email_existe"])) {
+                        echo $_SESSION["email_existe"];
+                        unset($_SESSION["email_existe"]);
+                    }
+                ?>
             </div>
 
             <!-- FORMULAIRE -->

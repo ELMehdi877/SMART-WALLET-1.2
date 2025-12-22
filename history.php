@@ -381,17 +381,11 @@ $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
                 <a href="history.php" class="px-5 py-2 rounded-full bg-gold-500 text-black font-bold text-sm shadow-lg shadow-gold-500/20 transition">Historique</a>
                 <a href="transfers.php" class="px-5 py-2 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-sm font-medium transition">Transfers</a>
             </div>
-            <!-- <form action="logout.php" method="POST" class="hidden md:block">
-                <button type="submit" name="logout"
-                style="animation-delay: 0.3s; opacity: 1;" class="px-8 py-4 bg-red-500 text-white font-bold rounded-full shadow-xl"
-                >
-                déconnexion
-             </button>
-            </form> -->
-            <form action="logout.php" method="POST" class="mobile-link" style="animation-delay: 0.5s">
+            
+            <form action="logout.php" method="POST" class="hidden md:flex mobile-link" style="animation-delay: 0.5s">
                 <button type="submit" name="logout" class="px-5 py-2 bg-red-500/10 hover:bg-red-500 text-red-500 hover:text-white border border-red-500/20 rounded-full text-xs font-bold transition">Déconnexion</button>
             </form>
-            <div class="w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
+            <div class="hidden md:flex w-10 h-10 rounded-full border border-gold-500/50 p-0.5 cursor-pointer">
                 <img src="image/mehdi.png" class="w-full h-full rounded-full object-cover">
             </div>
             
@@ -551,23 +545,7 @@ $pdo = new PDO("mysql:host=localhost;dbname=smart_wallet","root","");
                                 }
                                 ?>
                             
-                            <!-- Ligne 2 -->
-                            <!-- <tr class="group hover:bg-white/5 transition">
-                                <td class="py-4 pl-2">
-                                    <div class="font-bold text-white">Freelance Mission</div>
-                                    <div class="text-[10px] text-slate-400">20/01/2025</div>
-                                </td>
-                                <td class="py-4">
-                                    <div class="flex items-center gap-2">
-                                        <div class="w-6 h-4 rounded bg-amber-700"></div>
-                                        <span class="text-slate-300">B. Populaire</span>
-                                    </div>
-                                </td>
-                                <td class="py-4 font-mono font-bold text-emerald-400">+ 2,500 DH</td>
-                                <td class="py-4 text-right pr-2">
-                                    <span class="bg-emerald-500/10 text-emerald-400 px-2 py-1 rounded text-xs border border-emerald-500/20">Reçu</span>
-                                </td>
-                            </tr> -->
+                            
                         </tbody>
                     </table>
                 </div>
